@@ -1,7 +1,7 @@
 # 🚀 DinastiAPI Private
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/DinastIA-UK/use-dinastiapi/main/favicon.png" alt="DinastiAPI Private" width="120" height="120">
+  <img src="https://raw.githubusercontent.com/DinastIA-UK/use-dinastiapi/main/dinastiapi.svg" alt="DinastiAPI Private" width="120" height="120">
 </p>
 
 <p align="center">
