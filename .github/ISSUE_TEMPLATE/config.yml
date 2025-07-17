@@ -1,0 +1,25 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community Support / Suporte da Comunidade
+    url: https://github.com/dinastiapi/use-dinastiapi/discussions
+    about: |
+      EN: Ask questions and discuss with the community
+      PT: Faça perguntas e discuta com a comunidade
+  
+  - name: 📧 Commercial Support / Suporte Comercial
+    url: mailto:contato@dinastiapi.com
+    about: |
+      EN: Get dedicated support for your DinastiAPI implementation
+      PT: Obtenha suporte dedicado para sua implementação DinastiAPI
+  
+  - name: 📖 Documentation / Documentação
+    url: https://docs.dinastiapi.com
+    about: |
+      EN: Check our documentation before opening an issue
+      PT: Verifique nossa documentação antes de abrir uma issue
+  
+  - name: 🔐 Security Issues / Problemas de Segurança
+    url: mailto:security@dinastiapi.com
+    about: |
+      EN: Please report security vulnerabilities directly via email
+      PT: Por favor, reporte vulnerabilidades de segurança diretamente por email

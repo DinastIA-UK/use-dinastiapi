@@ -1,0 +1,149 @@
+name: 📚 Documentation / Documentação
+description: Suggest improvements or report issues in documentation / Sugira melhorias ou reporte problemas na documentação
+title: "[DOCS] "
+labels: ["documentation", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation! / Obrigado por ajudar a melhorar nossa documentação!
+        
+        Good documentation is crucial for DinastiAPI's success. / Uma boa documentação é crucial para o sucesso da DinastiAPI.
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language / Idioma
+      description: Choose your preferred language / Escolha seu idioma preferido
+      options:
+        - English
+        - Português
+    validations:
+      required: true
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type / Tipo de Documentação
+      description: |
+        EN: What type of documentation is this about?
+        PT: Sobre que tipo de documentação é isso?
+      options:
+        - API Reference / Referência da API
+        - Installation Guide / Guia de Instalação
+        - Configuration / Configuração
+        - Integration Guides / Guias de Integração
+        - Examples/Tutorials / Exemplos/Tutoriais
+        - FAQ
+        - Troubleshooting / Solução de Problemas
+        - Architecture / Arquitetura
+        - Other / Outro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type / Tipo de Problema
+      description: |
+        EN: What kind of documentation issue is this?
+        PT: Que tipo de problema de documentação é este?
+      options:
+        - Missing Documentation / Documentação Ausente
+        - Incorrect Information / Informação Incorreta
+        - Unclear/Confusing / Pouco Clara/Confusa
+        - Outdated / Desatualizada
+        - Translation Issue / Problema de Tradução
+        - Code Example Error / Erro no Exemplo de Código
+        - Broken Links / Links Quebrados
+        - Formatting Issue / Problema de Formatação
+        - Enhancement Request / Solicitação de Melhoria
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Documentation Location / Localização da Documentação
+      description: |
+        EN: URL or file path where the issue is located
+        PT: URL ou caminho do arquivo onde o problema está localizado
+      placeholder: "e.g., README.md, docs/api/webhooks.md"
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description / Descrição do Problema
+      description: |
+        EN: Describe the documentation issue in detail
+        PT: Descreva o problema de documentação em detalhes
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Improvement / Melhoria Sugerida
+      description: |
+        EN: How would you improve this documentation?
+        PT: Como você melhoraria esta documentação?
+      placeholder: |
+        EN: I suggest changing... / Adding... / Clarifying...
+        PT: Eu sugiro mudar... / Adicionar... / Esclarecer...
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Proposed Content / Conteúdo Proposto
+      description: |
+        EN: If you have specific text or code to suggest, please provide it here
+        PT: Se você tem texto ou código específico para sugerir, forneça aqui
+      render: markdown
+
+  - type: dropdown
+    id: target-audience
+    attributes:
+      label: Target Audience / Público-Alvo
+      description: |
+        EN: Who is the primary audience for this documentation?
+        PT: Quem é o público principal desta documentação?
+      options:
+        - Developers / Desenvolvedores
+        - System Administrators / Administradores de Sistema
+        - End Users / Usuários Finais
+        - API Consumers / Consumidores da API
+        - Integration Partners / Parceiros de Integração
+        - All / Todos
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Additional Resources / Recursos Adicionais
+      description: |
+        EN: Links to helpful resources, similar documentation, or references
+        PT: Links para recursos úteis, documentação similar ou referências
+
+  - type: checkboxes
+    id: willing-to-help
+    attributes:
+      label: Contribution / Contribuição
+      options:
+        - label: I am willing to submit a PR with the documentation changes / Estou disposto a enviar um PR com as mudanças na documentação
+        - label: I need help writing the documentation / Preciso de ajuda para escrever a documentação
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for similar documentation issues / Eu procurei por problemas de documentação similares
+          required: true
+        - label: I have clearly described the issue / Eu descrevi claramente o problema
+          required: true
+        - label: I have provided suggestions for improvement / Eu forneci sugestões de melhoria
+          required: true

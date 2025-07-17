@@ -1,0 +1,157 @@
+name: 🚀 Feature Request / Solicitação de Recurso
+description: Suggest a new feature for DinastiAPI / Sugira um novo recurso para a DinastiAPI
+title: "[FEATURE] "
+labels: ["enhancement", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your feature request! / Obrigado pela sua solicitação de recurso!
+        
+        Please provide detailed information about your suggestion. / Por favor, forneça informações detalhadas sobre sua sugestão.
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language / Idioma
+      description: Choose your preferred language / Escolha seu idioma preferido
+      options:
+        - English
+        - Português
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement / Descrição do Problema
+      description: |
+        EN: Is your feature request related to a problem? Please describe.
+        PT: Sua solicitação de recurso está relacionada a um problema? Por favor, descreva.
+      placeholder: |
+        EN: I'm always frustrated when...
+        PT: Eu sempre fico frustrado quando...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution / Solução Proposta
+      description: |
+        EN: Describe the solution you'd like
+        PT: Descreva a solução que você gostaria
+      placeholder: |
+        EN: I would like to see...
+        PT: Eu gostaria de ver...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions / Soluções Alternativas
+      description: |
+        EN: Describe alternatives you've considered
+        PT: Descreva alternativas que você considerou
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type / Tipo de Recurso
+      description: |
+        EN: What type of feature is this?
+        PT: Que tipo de recurso é este?
+      options:
+        - API Enhancement / Melhoria de API
+        - New Integration / Nova Integração
+        - Performance Improvement / Melhoria de Performance
+        - Security Feature / Recurso de Segurança
+        - UI/UX Improvement / Melhoria de UI/UX
+        - Developer Experience / Experiência do Desenvolvedor
+        - Documentation / Documentação
+        - Other / Outro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority / Prioridade
+      description: |
+        EN: How important is this feature to you?
+        PT: Quão importante é este recurso para você?
+      options:
+        - Critical / Crítico
+        - High / Alto
+        - Medium / Médio
+        - Low / Baixo
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases / Casos de Uso
+      description: |
+        EN: Provide examples of how this feature would be used
+        PT: Forneça exemplos de como este recurso seria usado
+      placeholder: |
+        1. As a developer, I want to... / Como desenvolvedor, eu quero...
+        2. When sending messages, I need... / Ao enviar mensagens, eu preciso...
+        3. For integration with X, it would be useful... / Para integração com X, seria útil...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking-change
+    attributes:
+      label: Breaking Change / Mudança Incompatível
+      description: |
+        EN: Would this be a breaking change?
+        PT: Isso seria uma mudança incompatível?
+      options:
+        - "No"
+        - "Yes / Sim"
+        - "Maybe / Talvez"
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Suggestions / Sugestões de Implementação
+      description: |
+        EN: If you have ideas on how to implement this feature
+        PT: Se você tem ideias sobre como implementar este recurso
+      render: go
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References / Referências
+      description: |
+        EN: Links to similar features in other projects, documentation, etc.
+        PT: Links para recursos similares em outros projetos, documentação, etc.
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Examples / Mockups/Exemplos
+      description: |
+        EN: Add any mockups, diagrams, or examples that help explain your feature
+        PT: Adicione mockups, diagramas ou exemplos que ajudem a explicar seu recurso
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for similar feature requests / Eu procurei por solicitações de recursos similares
+          required: true
+        - label: I have explained the problem and solution clearly / Eu expliquei o problema e a solução claramente
+          required: true
+        - label: I have provided use cases / Eu forneci casos de uso
+          required: true
+        - label: I am willing to help implement this feature / Estou disposto a ajudar a implementar este recurso

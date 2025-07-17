@@ -1,0 +1,178 @@
+name: 🐛 Bug Report / Relatório de Bug
+description: Report a bug in DinastiAPI / Reporte um bug na DinastiAPI
+title: "[BUG] "
+labels: ["bug", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! / Obrigado por dedicar tempo para preencher este relatório de bug!
+        
+        Please provide as much detail as possible. / Por favor, forneça o máximo de detalhes possível.
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language / Idioma
+      description: Choose your preferred language / Escolha seu idioma preferido
+      options:
+        - English
+        - Português
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description / Descrição do Bug
+      description: |
+        EN: A clear and concise description of what the bug is.
+        PT: Uma descrição clara e concisa do bug.
+      placeholder: |
+        EN: Describe the bug here...
+        PT: Descreva o bug aqui...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce / Passos para Reproduzir
+      description: |
+        EN: Steps to reproduce the behavior
+        PT: Passos para reproduzir o comportamento
+      placeholder: |
+        1. Go to '...' / Vá para '...'
+        2. Click on '...' / Clique em '...'
+        3. Scroll down to '...' / Role até '...'
+        4. See error / Veja o erro
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior / Comportamento Esperado
+      description: |
+        EN: What you expected to happen
+        PT: O que você esperava que acontecesse
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior / Comportamento Atual
+      description: |
+        EN: What actually happened
+        PT: O que realmente aconteceu
+    validations:
+      required: true
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: DinastiAPI Version / Versão da DinastiAPI
+      description: |
+        EN: Which version are you using?
+        PT: Qual versão você está usando?
+      options:
+        - Latest / Mais recente
+        - v1.0.0
+        - v0.9.x
+        - Other / Outra
+    validations:
+      required: true
+
+  - type: input
+    id: whatsapp-version
+    attributes:
+      label: WhatsApp App Version / Versão do WhatsApp App
+      description: |
+        EN: WhatsApp App version (if applicable)
+        PT: Versão do WhatsApp App (se aplicável)
+      placeholder: "e.g., 2.23.24.26"
+
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment Method / Método de Implantação
+      options:
+        - Kubernetes
+        - Docker
+        - Docker Swarm
+        - Docker Compose
+        - Portainer
+        - EasysPanel
+        - Direct Installation / Instalação Direta
+        - Other / Outro
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System / Sistema Operacional
+      options:
+        - Ubuntu 22.04
+        - Ubuntu 20.04
+        - Debian
+        - CentOS
+        - macOS
+        - Windows (WSL)
+        - Other Linux / Outro Linux
+    validations:
+      required: true
+
+  - type: textarea
+    id: integrations
+    attributes:
+      label: Active Integrations / Integrações Ativas
+      description: |
+        EN: Which integrations are you using? (N8N, Chatwoot, RabbitMQ, S3, etc.)
+        PT: Quais integrações você está usando? (N8N, Chatwoot, RabbitMQ, S3, etc.)
+      placeholder: |
+        - N8N
+        - Chatwoot
+        - RabbitMQ
+        - S3
+        - Webhooks
+        - Other / Outro
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs / Logs Relevantes
+      description: |
+        EN: Please copy and paste any relevant log output. This will be automatically formatted into code.
+        PT: Por favor, copie e cole qualquer saída de log relevante. Isso será formatado automaticamente como código.
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Capturas de Tela
+      description: |
+        EN: If applicable, add screenshots to help explain your problem
+        PT: Se aplicável, adicione capturas de tela para ajudar a explicar seu problema
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context / Contexto Adicional
+      description: |
+        EN: Add any other context about the problem here
+        PT: Adicione qualquer outro contexto sobre o problema aqui
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched for similar issues / Eu procurei por problemas similares
+          required: true
+        - label: I have tested with the latest version / Eu testei com a versão mais recente
+          required: true
+        - label: I have included all relevant information / Eu incluí todas as informações relevantes
+          required: true
