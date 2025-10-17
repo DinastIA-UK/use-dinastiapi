@@ -239,8 +239,8 @@ services:
       - GLOBAL_S3_PATH_STYLE=true
       # GLOBAL_S3_PUBLIC_URL: URL pública usada para montar links acessíveis externamente.
       - GLOBAL_S3_PUBLIC_URL=https://s3.setupautomatizado.com.br
-      # GLOBAL_S3_MEDIA_DELIVERY: Modo de entrega das mídias nos eventos (base64, url ou both).
-      - GLOBAL_S3_MEDIA_DELIVERY=url
+      # GLOBAL_S3_MEDIA_DELIVERY: Modo de entrega das mídias nos eventos (base64, s3 ou both).
+      - GLOBAL_S3_MEDIA_DELIVERY=s3
       # GLOBAL_S3_RETENTION_DAYS: Quantidade de dias antes de expirar objetos armazenados (0 desativa expiração).
       - GLOBAL_S3_RETENTION_DAYS=1
       # GLOBAL_S3_DISABLE_ACL: Define se ACLs individuais serão suprimidos; true para buckets com Bucket Owner Enforced.
