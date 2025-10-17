@@ -47,7 +47,7 @@
 
 services:
   dinastiapi_private:
-    image: setupautomatizado/dinastiapi-private:latest
+    image: dinastiapi/dinastiapi-private:latest
     networks:
       - network_public
     environment:
