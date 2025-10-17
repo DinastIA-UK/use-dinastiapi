@@ -51,8 +51,8 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 - `LICENSE_KEY` agora valida o sufixo `-ENT-` para habilitar recursos avançados – o arquivo `.env.sample` descreve claramente os níveis **BASIC** (default) e **ENTERPRISE**.
 - Implementamos o `server.setup` para identificar a licença ativa logo no início da aplicação e disponibilizar os novos handlers (`send_handlers.go`) apenas quando habilitados.
 - Novos planos disponíveis:
-  - **Assinatura mensal (Premium com botões interativos)**: [Hotmart – plano mensal](https://go.hotmart.com/S101068222H?off=pez6mwnh)
-  - **Assinatura anual (Premium com botões interativos)**: [Hotmart – plano anual](https://go.hotmart.com/S101068222H?off=p1q64goj)
+  - **Assinatura mensal (Premium com botões interativos)**:
+  - **Assinatura anual (Premium com botões interativos)**: 
 - Documentação atualizada em `README.md` e `CLAUDE.md` ressaltando o processo de upgrade e o contato com o suporte DinastiAPI para ativação imediata.
 
 #### 🔭 Observabilidade e Resiliência
