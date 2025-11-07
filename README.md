@@ -233,15 +233,15 @@ services:
       # GLOBAL_SKIP_MEDIA_DOWNLOAD: Se true, desativa o download de mídias para todos os usuários.
       - GLOBAL_SKIP_MEDIA_DOWNLOAD=false
       # GLOBAL_SKIP_GROUPS: Se true, ignora eventos originados em conversas de grupo.
-      - GLOBAL_SKIP_GROUPS=true
+      - GLOBAL_SKIP_GROUPS=false
       # GLOBAL_SKIP_NEWSLETTERS: Se true, descarta eventos vindos de newsletters.
-      - GLOBAL_SKIP_NEWSLETTERS=true
+      - GLOBAL_SKIP_NEWSLETTERS=false
       # GLOBAL_SKIP_BROADCASTS: Se true, não processa mensagens de listas de transmissão e status.
-      - GLOBAL_SKIP_BROADCASTS=true
+      - GLOBAL_SKIP_BROADCASTS=false
       # GLOBAL_SKIP_OWN_MESSAGES: Se true, ignora mensagens enviadas pelo próprio usuário.
-      - GLOBAL_SKIP_OWN_MESSAGES=true
+      - GLOBAL_SKIP_OWN_MESSAGES=false
       # GLOBAL_SKIP_CALLS: Se true, bloqueia o processamento de eventos de chamadas.
-      - GLOBAL_SKIP_CALLS=true
+      - GLOBAL_SKIP_CALLS=false
       # GLOBAL_CALL_REJECT_MESSAGE: Mensagem fixa enviada ao rejeitar automaticamente chamadas recebidas.
       - GLOBAL_CALL_REJECT_MESSAGE=Sorry, I cannot take calls at the moment.
       # GLOBAL_CALL_REJECT_TYPE: Tipo de rejeição aplicado (busy, decline ou unavailable).
