@@ -38,35 +38,42 @@ Este é um instalador completo e interativo que configura automaticamente um amb
 
 ---
 
-## 📱 Passo 1: Conectar à VPS usando Terminus
+## 📱 Passo 1: Conectar à VPS usando Termius
 
-### Baixar e Instalar o Terminus
+### Baixar e Instalar o Termius
 
-1. **Download do Terminus:**
-   - 🍎 **macOS**: [Download para Mac](https://github.com/Eugeny/tabby/releases)
-   - 🪟 **Windows**: [Download para Windows](https://github.com/Eugeny/tabby/releases)
-   - 🐧 **Linux**: [Download para Linux](https://github.com/Eugeny/tabby/releases)
+**Termius** é um cliente SSH moderno e multiplataforma que facilita a conexão com servidores remotos.
+
+1. **Download do Termius:**
+   - 🌐 **Website Oficial**: [https://termius.com](https://termius.com)
+   - 🍎 **macOS**: [Download para Mac](https://termius.com/download/macos)
+   - 🪟 **Windows**: [Download para Windows](https://termius.com/download/windows)
+   - 🐧 **Linux**: [Download para Linux](https://termius.com/download/linux)
+   - 📱 **iOS**: [App Store](https://apps.apple.com/app/termius/id549039908)
+   - 🤖 **Android**: [Google Play](https://play.google.com/store/apps/details?id=com.server.auditor.ssh.client)
 
 2. **Instalar o aplicativo** seguindo as instruções do seu sistema operacional
 
-### Configurar Conexão SSH
+### Configurar Conexão SSH no Termius
 
-1. Abra o **Terminus (Tabby)**
-2. Clique em **"+ New Profile"** ou pressione `Ctrl+T` (Windows/Linux) ou `Cmd+T` (Mac)
-3. Selecione **"SSH"**
-4. Preencha os dados da sua VPS:
+1. Abra o **Termius**
+2. Clique em **"+ NEW HOST"** ou no botão **"+"** no canto superior
+3. Preencha os dados da sua VPS:
 
 ```
-Host: seu-servidor.com (ou IP: 192.168.1.100)
+Label: Minha VPS (nome que preferir)
+Address: seu-servidor.com (ou IP: 192.168.1.100)
 Port: 22
-User: root (ou seu usuário)
+Username: root (ou seu usuário)
 ```
 
-5. Escolha o método de autenticação:
-   - **Password**: Digite sua senha
-   - **SSH Key**: Selecione sua chave privada (recomendado)
+4. Escolha o método de autenticação:
+   - **Password**: Digite sua senha no campo **Password**
+   - **SSH Key**: Clique em **"Keys"** → **"+ New Key"** → Selecione ou gere uma chave (recomendado)
 
-6. Clique em **"Save"** e depois **"Connect"**
+5. Clique em **"Save"** para salvar a configuração
+
+6. Na lista de hosts, clique no host criado para **conectar**
 
 ### Exemplo de Conexão Manual via Terminal
 
