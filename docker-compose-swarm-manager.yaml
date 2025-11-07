@@ -1,6 +1,6 @@
 services:
   manager-dinastiapi:
-    image: setupautomatizado/manager-dinastiapi:latest
+    image: dinastiapi/manager-dinastiapi:latest
     networks:
       - network_public
     environment:
@@ -73,7 +73,7 @@ services:
         - traefik.http.services.manager-dinastiapi.loadbalancer.passHostHeader=true
 
   manager-dinastiapi-workers:
-    image: setupautomatizado/manager-dinastiapi:latest
+    image: dinastiapi/manager-dinastiapi:latest
     networks:
       - network_public
     command: ["node", "dist/workers/lib/queue/start-workers.js"]
