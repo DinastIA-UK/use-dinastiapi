@@ -862,7 +862,7 @@ services:
 
       # Logging
       NEXT_PUBLIC_LOG_LEVEL: debug
-      NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: true
+      NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: "true"
       NEXT_PUBLIC_LOG_FORMAT: pretty
 
       # Timezone
@@ -904,63 +904,63 @@ services:
         - traefik.http.routers.manager-dinastiapi.service=manager-dinastiapi
         - traefik.http.services.manager-dinastiapi.loadbalancer.passHostHeader=true
 
-  manager-dinastiapi-workers:
-    image: dinastiapi/manager-dinastiapi:latest
-    networks:
-      - network_public
-    command: ["node", "dist/workers/lib/queue/start-workers.js"]
-    environment:
-      # Node.js
-      NODE_ENV: production
-      PORT: 3000
-      HOSTNAME: "0.0.0.0"
-
-      # Database
-      DATABASE_URL: postgresql://dinastiapi:dinastiapi@postgres_manager_dinastiapi:5432/manager_dinastiapi?schema=public
-
-      # Redis
-      REDIS_URL: redis://redis_manager_dinastiapi:6379
-
-      # API Configuration
-      NEXT_PUBLIC_API_URL: https://api.dinastiapi.com
-      NEXT_PUBLIC_API_TIMEOUT: 30000
-      NEXT_PUBLIC_API_RETRY_ATTEMPTS: 3
-
-      # Logging
-      NEXT_PUBLIC_LOG_LEVEL: debug
-      NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: true
-      NEXT_PUBLIC_LOG_FORMAT: pretty
-
-      # Timezone
-      TZ: America/Sao_Paulo
-
-      # Worker Concurrency Settings
-      WORKER_CONCURRENCY: 50
-      CAMPAIGN_WORKER_CONCURRENCY: 5
-
-      # Rate Limiting
-      MESSAGE_RATE_LIMIT_MAX: 100000
-      MESSAGE_RATE_LIMIT_DURATION: 1000
-    healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep -v grep | grep -q 'start-workers' || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    deploy:
-      mode: replicated
-      replicas: 5
-      update_config:
-        parallelism: 1
-        delay: 10s
-        order: start-first
-      restart_policy:
-        condition: on-failure
-        max_attempts: 3
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
+#  manager-dinastiapi-workers:
+#    image: dinastiapi/manager-dinastiapi:latest
+#    networks:
+#      - network_public
+#    command: ["node", "dist/workers/lib/queue/start-workers.js"]
+#    environment:
+#      # Node.js
+#      NODE_ENV: production
+#      PORT: 3000
+#      HOSTNAME: "0.0.0.0"
+#
+#      # Database
+#      DATABASE_URL: postgresql://dinastiapi:dinastiapi@postgres_manager_dinastiapi:5432/manager_dinastiapi?schema=public
+#
+#      # Redis
+#      REDIS_URL: redis://redis_manager_dinastiapi:6379
+#
+#      # API Configuration
+#      NEXT_PUBLIC_API_URL: https://api.dinastiapi.com
+#      NEXT_PUBLIC_API_TIMEOUT: 30000
+#      NEXT_PUBLIC_API_RETRY_ATTEMPTS: 3
+#
+#      # Logging
+#      NEXT_PUBLIC_LOG_LEVEL: debug
+#      NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: "true"
+#      NEXT_PUBLIC_LOG_FORMAT: pretty
+#
+#      # Timezone
+#      TZ: America/Sao_Paulo
+#
+#      # Worker Concurrency Settings
+#      WORKER_CONCURRENCY: 50
+#      CAMPAIGN_WORKER_CONCURRENCY: 5
+#
+#      # Rate Limiting
+#      MESSAGE_RATE_LIMIT_MAX: 100000
+#      MESSAGE_RATE_LIMIT_DURATION: 1000
+#    healthcheck:
+#      test: ["CMD-SHELL", "ps aux | grep -v grep | grep -q 'start-workers' || exit 1"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 60s
+#    deploy:
+#      mode: replicated
+#      replicas: 5
+#      update_config:
+#        parallelism: 1
+#        delay: 10s
+#        order: start-first
+#      restart_policy:
+#        condition: on-failure
+#        max_attempts: 3
+#      resources:
+#        limits:
+#          cpus: '1'
+#          memory: 1G
 
 
   # ----------------------------------------------------------------------------
