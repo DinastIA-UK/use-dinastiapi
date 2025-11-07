@@ -5,13 +5,6 @@ Todas as mudanças importantes neste projeto serão documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
-# 📋 Changelog
-
-Todas as mudanças importantes neste projeto serão documentadas neste arquivo.
-
-O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
-
 ## [v1.2.6] - 2025-11-06
 
 ### ✨ Destaques da versão
