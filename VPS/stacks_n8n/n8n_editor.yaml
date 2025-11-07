@@ -1,0 +1,111 @@
+services:
+  n8n_editor:
+    image: n8nio/n8n:latest
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    command: start
+    networks:
+      - network_public
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_HOST=pgbouncer_n8n
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD=SUASENHAFORTE # TODO: substituir pela senha do banco de dados
+      - N8N_ENCRYPTION_KEY=SUACHAVEALEATORIA # TODO: gerar uma chave aleatória com o comando: openssl rand -base64 32
+      - N8N_HOST=work.SEU_DOMINIO.com.br # TODO: substituir pelo domínio do n8n
+      - N8N_EDITOR_BASE_URL=https://work.SEU_DOMINIO.com.br/ # TODO: substituir pelo domínio do n8n
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://hook.SEU_DOMINIO.com.br/ # TODO: substituir pelo domínio do n8n
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis_n8n
+      - QUEUE_BULL_REDIS_PORT=6379
+      - QUEUE_BULL_REDIS_DB=1
+      - NODE_FUNCTION_ALLOW_EXTERNAL=lodash,axios # TODO: permitir o uso de bibliotecas externas
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=true # TODO: definir se a notificação de versão
+      - N8N_PUBLIC_API_SWAGGERUI_DISABLED=false # TODO: definir se a interface de documentação da API
+      - N8N_PUBLIC_API_ENDPOINT=api # TODO: definir o endpoint da API
+      - N8N_PUBLIC_API_DISABLED=false # TODO: desabilitar a API pública
+      - N8N_EMAIL_MODE=smtp # TODO: definir o modo de email
+      - N8N_SMTP_HOST=smtp-relay.brevo.com # TODO: substituir pelo host do SMTP
+      - N8N_SMTP_PORT=587 # TODO: substituir pela porta do SMTP
+      - N8N_SMTP_USER=usuario # TODO: substituir pelo usuário do SMTP
+      - N8N_SMTP_PASS=senha # TODO: substituir pela senha do SMTP
+      - N8N_SMTP_SENDER=atendimento@setupautomatizado.com.br # TODO: substituir pelo remetente do email
+      - N8N_SMTP_SSL=false # TODO: definir se o SMTP usa SSL
+      - N8N_AI_ENABLED=true # TODO: desabilitar o AI
+      - N8N_AI_PROVIDER=openai # TODO: definir o provedor de IA SEMPRE OPENAI
+      - N8N_AI_OPENAI_API_KEY=sk-proj-wf2vVYA # TODO: substituir pela API KEY do OpenAI
+      - GENERIC_TIMEZONE=America/Sao_Paulo # TODO: definir a zona horária
+      - N8N_DEFAULT_LOCALE=pt # TODO: definir o idioma padrão
+      - N8N_METRICS=true # TODO: habilitar as métricas
+      - N8N_DIAGNOSTICS_ENABLED=false # TODO: definir o diagnóstico
+      - N8N_PAYLOAD_SIZE_MAX=512 # TODO: definir o tamanho máximo do payload
+      - N8N_LOG_LEVEL=info # TODO: definir o nível de log
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_PORT=5678
+      - EXECUTIONS_TIMEOUT=3600 # TODO: definir o tempo de timeout das execuções
+      - EXECUTIONS_TIMEOUT_MAX=7200 # TODO: definir o tempo máximo de timeout das execuções
+      - N8N_PUBLIC_API_SWAGGERUI_DISABLED=true # TODO: definir se a interface de documentação da API
+      - N8N_TEMPLATES_ENABLED=true
+      - N8N_ONBOARDING_FLOW_DISABLED=true
+      - N8N_WORKFLOW_TAGS_DISABLED=false
+      - N8N_HIDE_USAGE_PAGE=false # TODO: desabilitar a página de uso
+      - EXECUTIONS_DATA_PRUNE=true # TODO: habilitar a limpeza de dados
+      - EXECUTIONS_DATA_MAX_AGE=336 # TODO: definir a idade máxima dos dados
+      - EXECUTIONS_DATA_PRUNE_HARD_DELETE_INTERVAL=15 # TODO: definir o intervalo de limpeza de dados
+      - EXECUTIONS_DATA_PRUNE_SOFT_DELETE_INTERVAL=60 # TODO: definir o intervalo de limpeza de dados
+      - EXECUTIONS_DATA_PRUNE_MAX_COUNT=10000 # TODO: definir o número máximo de dados a serem limpos
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all # TODO: definir o que fazer com os dados em caso de erro
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all # TODO: definir o que fazer com os dados em caso de sucesso
+      - EXECUTIONS_DATA_SAVE_ON_PROGRESS=true # TODO: definir o que fazer com os dados em caso de progresso
+      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=true # TODO: definir o que fazer com os dados em caso de execução manual
+      - NODE_FUNCTION_ALLOW_BUILTIN=* # TODO: permitir o uso de bibliotecas internas
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true # TODO: habilitar os pacotes da comunidade
+      - N8N_REINSTALL_MISSING_PACKAGES=true # TODO: desabilitar a reinstalação de pacotes da comunidade
+      - N8N_SENTRY_DSN= # TODO: definir o DSN do Sentry
+      - N8N_FRONTEND_SENTRY_DSN= # TODO: definir o DSN do Sentry
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_RUNNERS_MODE=internal
+      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
+      - N8N_NODE_PATH=/home/node/.n8n/nodes
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
+    deploy:
+      mode: replicated
+      replicas: 1 # Nunca alterar o número de replicas
+      placement:
+        constraints:
+          - node.role == manager
+        # - node.hostname == worker
+      resources:
+        limits:
+          cpus: "1" # TODO: definir o número de CPUs
+          memory: 2G # TODO: definir a quantidade de memória
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.n8n_editor.rule=Host(`work.SEU_DOMINIO.com.br`) # TODO: substituir pelo domínio do n8n
+        - traefik.http.routers.n8n_editor.entrypoints=websecure
+        - traefik.http.routers.n8n_editor.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.n8n_editor.service=n8n_editor # TODO: definir o mesmo nome do serviço
+        - traefik.http.services.n8n_editor.loadbalancer.server.port=5678
+        - traefik.http.services.n8n_editor.loadbalancer.passHostHeader=true
+
+      update_config:
+        parallelism: 1
+        delay: 30s
+        order: start-first
+        failure_action: rollback
+
+networks:
+  network_public:
+    name: network_public
+    external: true
+
+volumes:
+  n8n_data:
+    external: true
+    name: n8n_data

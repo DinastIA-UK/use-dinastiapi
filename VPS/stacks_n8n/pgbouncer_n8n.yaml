@@ -1,0 +1,41 @@
+services:
+  pgbouncer_n8n:
+    image: edoburu/pgbouncer:latest
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    networks:
+      - network_public
+    ports:
+      - 5432:5432 # TODO: substituir pela porta do pgbouncer que deseja usar externamente
+    volumes:
+      - pgbouncer_data_n8n:/etc/pgbouncer
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=SUASENHAFORTE # TODO: substituir pela senha do banco de dados
+      - DB_HOST=postgres_n8n
+      - POOL_MODE=session
+      - AUTH_TYPE=scram-sha-256
+      # Configurações para alta carga de conexões Caso queira ativar precisa subir no volume pgbouncer_data_n8n/pgbouncer.ini
+      # - DB_MAX_CLIENT_CONN=400 # TODO: definir o número máximo de conexões para alta carga
+      # - DEFAULT_POOL_SIZE=100 # TODO: definir o tamanho padrão do pool
+      # - RESERVE_POOL_SIZE=10 # TODO: definir o tamanho do pool de reserva
+      # - RESERVE_POOL_TIMEOUT=5 # TODO: definir o tempo de espera para o pool de reserva
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+        # - node.hostname == database
+      resources:
+        limits:
+          cpus: "1" # TODO: definir o número de CPUs
+          memory: 2G # TODO: definir a quantidade de memória
+networks:
+  network_public:
+    external: true
+    name: network_public
+
+volumes:
+  pgbouncer_data_n8n:
+    external: true
+    name: pgbouncer_data_n8n

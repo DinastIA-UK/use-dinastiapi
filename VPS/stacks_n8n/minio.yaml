@@ -1,0 +1,49 @@
+services:
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-04-08T15-41-24Z
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    command: server /data --console-address ":9001"
+    networks:
+      - network_public
+    volumes:
+      - minio_data:/data
+    environment:
+      - MINIO_ROOT_USER=minio # TODO: definir o usuário do MinIO
+      - MINIO_ROOT_PASSWORD=miniopassword # TODO: definir a senha do MinIO
+      - MINIO_BROWSER_REDIRECT_URL=https://storage.meudominio.com.br # TODO: definir o URL de redirecionamento do navegador do MinIO
+      - MINIO_SERVER_URL=https://s3.meudominio.com.br # TODO: definir o URL do servidor do MinIO
+    deploy:
+      mode: replicated
+      replicas: 1 # Nunca alterar o número de replicas
+      placement:
+        constraints:
+          - node.role == manager
+        # - node.hostname == worker
+      resources:
+        limits:
+          cpus: "1" # TODO: definir o número de CPUs
+          memory: 2G # TODO: definir a quantidade de memória
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.minio_public.rule=Host(`s3.meudominio.com.br`) # TODO: definir o nome do domínio público do MinIO
+        - traefik.http.routers.minio_public.entrypoints=websecure
+        - traefik.http.routers.minio_public.tls.certresolver=letsencryptresolver
+        - traefik.http.services.minio_public.loadbalancer.server.port=9000
+        - traefik.http.services.minio_public.loadbalancer.passHostHeader=true
+        - traefik.http.routers.minio_public.service=minio_public
+        - traefik.http.routers.minio_console.rule=Host(`storage.meudominio.com.br`) # TODO: definir o nome do domínio público do MinIO
+        - traefik.http.routers.minio_console.entrypoints=websecure
+        - traefik.http.routers.minio_console.tls.certresolver=letsencryptresolver
+        - traefik.http.services.minio_console.loadbalancer.server.port=9001
+        - traefik.http.services.minio_console.loadbalancer.passHostHeader=true
+        - traefik.http.routers.minio_console.service=minio_console
+
+networks:
+  network_public:
+    name: network_public
+    external: true
+
+volumes:
+  minio_data:
+    external: true
+    name: minio_data

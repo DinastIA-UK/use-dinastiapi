@@ -1,0 +1,33 @@
+services:
+  postgres_n8n:
+    image: pgvector/pgvector:pg16
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    networks:
+      - network_public
+    command: [postgres, --max_connections=200] # TODO: definir o número máximo de conexões para alta carga Caso queira ativar precisa subir no stack pgbouncer_n8n também
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=SUASENHAFORTE # TODO: substituir pela senha do banco de dados
+      - TZ=America/Sao_Paulo # TODO: definir a zona horária
+      - POSTGRES_DB=n8n # TODO: definir o nome do banco de dados
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+        # - node.hostname == database
+      resources:
+        limits:
+          cpus: "1" # TODO: definir o número de CPUs
+          memory: 2G # TODO: definir a quantidade de memória
+volumes:
+  postgres_data:
+    external: true
+    name: postgres_data
+
+networks:
+  network_public:
+    external: true
+    name: network_public

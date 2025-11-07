@@ -1,0 +1,28 @@
+services:
+  redis_n8n:
+    image: redis:7
+    hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+    networks:
+      - network_public
+    volumes:
+      - redis_data_n8n:/data
+    command: redis-server --appendonly yes --port 6379
+    deploy:
+      mode: replicated
+      replicas: 1 # Nunca alterar o número de replicas
+      placement:
+        constraints:
+          - node.role == manager
+        # - node.hostname == database
+      resources:
+        limits:
+          cpus: "1" # TODO: definir o número de CPUs
+          memory: 2G # TODO: definir a quantidade de memória
+volumes:
+  redis_data_n8n:
+    external: true
+    name: redis_data_n8n
+networks:
+  network_public:
+    external: true
+    name: network_public
