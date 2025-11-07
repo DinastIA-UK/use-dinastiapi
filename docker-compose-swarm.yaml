@@ -579,172 +579,222 @@ services:
       retries: 3
       start_period: 60s
 
-  # =================== MYSQL DATABASE (OPCIONAL) ===================
-  # Descomente as linhas abaixo para usar MySQL ao invés de PostgreSQL
-  # dinastiapi_mysql:
-  #   image: mysql:8.0
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: root_password_super_seguro
-  #     MYSQL_DATABASE: dinastiapi
-  #     MYSQL_USER: dinastiapi
-  #     MYSQL_PASSWORD: dinastiapi_production_password
-  #     MYSQL_ROOT_HOST: '%'
-  #   networks:
-  #     - network_public
-  #   volumes:
-  #     - mysql_data_dinastiapi:/var/lib/mysql
-  #   command: >
-  #     --default-authentication-plugin=mysql_native_password
-  #     --character-set-server=utf8mb4
-  #     --collation-server=utf8mb4_unicode_ci
-  #     --innodb-buffer-pool-size=1G
-  #     --max-connections=500
-  #     --innodb-log-file-size=256M
-  #   deploy:
-  #     replicas: 1
-  #     restart_policy:
-  #       condition: on-failure
-  #       delay: 5s
-  #       max_attempts: 3
-  #       window: 120s
-  #     placement:
-  #       constraints:
-  #         - node.role == manager
+# =================== MINIO S3 (OPCIONAL) ===================
+#   minio:
+#     image: quay.io/minio/minio:RELEASE.2025-04-08T15-41-24Z
+#     hostname: "{{.Service.Name}}.{{.Task.Slot}}"
+#     command: server /data --console-address ":9001"
+#     networks:
+#       - network_public
+#     volumes:
+#       - minio_data:/data
+#     environment:
+#       - MINIO_ROOT_USER=minio # TODO: definir o usuário do MinIO
+#       - MINIO_ROOT_PASSWORD=miniopassword # TODO: definir a senha do MinIO
+#       - MINIO_BROWSER_REDIRECT_URL=https://storage.meudominio.com.br # TODO: definir o URL de redirecionamento do navegador do MinIO
+#       - MINIO_SERVER_URL=https://s3.meudominio.com.br # TODO: definir o URL do servidor do MinIO
+#     deploy:
+#       mode: replicated
+#       replicas: 1 # Nunca alterar o número de replicas
+#       placement:
+#         constraints:
+#           - node.role == manager
+#         # - node.hostname == worker
+#       resources:
+#         limits:
+#           cpus: "1" # TODO: definir o número de CPUs
+#           memory: 2G # TODO: definir a quantidade de memória
+#       labels:
+#         - traefik.enable=true
+#         - traefik.http.routers.minio_public.rule=Host(`s3.meudominio.com.br`) # TODO: definir o nome do domínio público do MinIO
+#         - traefik.http.routers.minio_public.entrypoints=websecure
+#         - traefik.http.routers.minio_public.tls.certresolver=letsencryptresolver
+#         - traefik.http.services.minio_public.loadbalancer.server.port=9000
+#         - traefik.http.services.minio_public.loadbalancer.passHostHeader=true
+#         - traefik.http.routers.minio_public.service=minio_public
+#         - traefik.http.routers.minio_console.rule=Host(`storage.meudominio.com.br`) # TODO: definir o nome do domínio público do MinIO
+#         - traefik.http.routers.minio_console.entrypoints=websecure
+#         - traefik.http.routers.minio_console.tls.certresolver=letsencryptresolver
+#         - traefik.http.services.minio_console.loadbalancer.server.port=9001
+#         - traefik.http.services.minio_console.loadbalancer.passHostHeader=true
+#         - traefik.http.routers.minio_console.service=minio_console
 
-  # =================== RABBITMQ (MENSAGERIA) ===================
-  # rabbitmq_dinastiapi:
-  #   image: rabbitmq:4-management
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=dinastiapi
-  #     - RABBITMQ_DEFAULT_PASS=dinastiapi
-  #     - RABBITMQ_DEFAULT_VHOST=dinastiapi
-  #   volumes:
-  #     - rabbitmq_data_dinastiapi:/var/lib/rabbitmq
-  #   networks:
-  #     - network_public
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 1
-  #     placement:
-  #       constraints: [node.role == manager]
-  #     restart_policy:
-  #       condition: on-failure
-  #       delay: 5s
-  #       max_attempts: 3
-  #     resources:
-  #       limits:
-  #         cpus: "1"
-  #         memory: 1GB
-  #       reservations:
-  #         cpus: "0.5"
-  #         memory: 512MB
-  #     labels:
-  #       - traefik.enable=true
-  #       - traefik.http.routers.rabbitmq_dinastiapi.rule=Host(`rabbitmq.dinastiapi.app`)
-  #       - traefik.http.routers.rabbitmq_dinastiapi.entrypoints=websecure
-  #       - traefik.http.routers.rabbitmq_dinastiapi.tls.certresolver=letsencryptresolver
-  #       - traefik.http.routers.rabbitmq_dinastiapi.service=rabbitmq_dinastiapi
-  #       - traefik.http.services.rabbitmq_dinastiapi.loadbalancer.server.port=15672
-  #   healthcheck:
-  #     test: ["CMD", "rabbitmq-diagnostics", "ping"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 60s
+# networks:
+#   network_public:
+#     name: network_public
+#     external: true
 
-  # =================== REDIS STREAMS ===================
-  # redis_streams_dinastiapi:
-  #   image: redis:7
-  #   networks:
-  #     - network_public
-  #   ports:
-  #     - target: 6379
-  #       published: 6379
-  #       protocol: tcp
-  #       mode: ingress
-  #   volumes:
-  #     - redis_streams_data_dinastiapi:/data
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 1
-  #     placement:
-  #       constraints: [node.role == manager]
-  #     restart_policy:
-  #       condition: on-failure
-  #       delay: 5s
-  #       max_attempts: 3
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "PING"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 15s
+# volumes:
+#   minio_data:
+#     external: true
+#     name: minio_data
 
-  # =================== JAEGER TRACING (OBSERVABILITY) ===================
-  # jaeger_dinastiapi:
-  #   image: jaegertracing/all-in-one:latest
-  #   deploy:
-  #     replicas: 1
-  #     placement:
-  #       constraints:
-  #         - node.role == manager
-  #     restart_policy:
-  #       condition: on-failure
-  #       delay: 5s
-  #       max_attempts: 3
-  #     resources:
-  #       limits:
-  #         cpus: "1"
-  #         memory: 1G
-  #       reservations:
-  #         cpus: "0.25"
-  #         memory: 256M
-  #   environment:
-  #     # Enable OTLP collector (required for OpenTelemetry)
-  #     - COLLECTOR_OTLP_ENABLED=true
-  #     # Storage configuration for production
-  #     # For development: use memory
-  #     # For production: configure external storage (Elasticsearch, Cassandra, etc)
-  #     - SPAN_STORAGE_TYPE=memory
-  #     - MEMORY_MAX_TRACES=50000
-  #     # Sampling configuration
-  #     - SAMPLING_STRATEGIES_FILE=/etc/jaeger/sampling_strategies.json
-  #   ports:
-  #     # Jaeger UI - Web interface to view traces
-  #     - target: 16686
-  #       published: 16686
-  #       protocol: tcp
-  #       mode: ingress
-  #     # OTLP HTTP receiver - used by DinastiAPI to send traces
-  #     - target: 4318
-  #       published: 4318
-  #       protocol: tcp
-  #       mode: ingress
-  #     # OTLP gRPC receiver (optional)
-  #     - target: 4317
-  #       published: 4317
-  #       protocol: tcp
-  #       mode: ingress
-  #     # Jaeger Collector HTTP (legacy - for compatibility)
-  #     - target: 14268
-  #       published: 14268
-  #       protocol: tcp
-  #       mode: ingress
-  #     # Admin port for health checks
-  #     - target: 14269
-  #       published: 14269
-  #       protocol: tcp
-  #       mode: host
-  #   networks:
-  #     - network_public
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--spider", "-q", "http://localhost:14269/"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 20s
-  #   volumes:
-  #     - jaeger_data_dinastiapi:/tmp/jaeger
+# =================== MYSQL DATABASE (OPCIONAL) ===================
+# Descomente as linhas abaixo para usar MySQL ao invés de PostgreSQL
+# dinastiapi_mysql:
+#   image: mysql:8.0
+#   environment:
+#     MYSQL_ROOT_PASSWORD: root_password_super_seguro
+#     MYSQL_DATABASE: dinastiapi
+#     MYSQL_USER: dinastiapi
+#     MYSQL_PASSWORD: dinastiapi_production_password
+#     MYSQL_ROOT_HOST: '%'
+#   networks:
+#     - network_public
+#   volumes:
+#     - mysql_data_dinastiapi:/var/lib/mysql
+#   command: >
+#     --default-authentication-plugin=mysql_native_password
+#     --character-set-server=utf8mb4
+#     --collation-server=utf8mb4_unicode_ci
+#     --innodb-buffer-pool-size=1G
+#     --max-connections=500
+#     --innodb-log-file-size=256M
+#   deploy:
+#     replicas: 1
+#     restart_policy:
+#       condition: on-failure
+#       delay: 5s
+#       max_attempts: 3
+#       window: 120s
+#     placement:
+#       constraints:
+#         - node.role == manager
+
+# =================== RABBITMQ (MENSAGERIA) ===================
+# rabbitmq_dinastiapi:
+#   image: rabbitmq:4-management
+#   environment:
+#     - RABBITMQ_DEFAULT_USER=dinastiapi
+#     - RABBITMQ_DEFAULT_PASS=dinastiapi
+#     - RABBITMQ_DEFAULT_VHOST=dinastiapi
+#   volumes:
+#     - rabbitmq_data_dinastiapi:/var/lib/rabbitmq
+#   networks:
+#     - network_public
+#   deploy:
+#     mode: replicated
+#     replicas: 1
+#     placement:
+#       constraints: [node.role == manager]
+#     restart_policy:
+#       condition: on-failure
+#       delay: 5s
+#       max_attempts: 3
+#     resources:
+#       limits:
+#         cpus: "1"
+#         memory: 1GB
+#       reservations:
+#         cpus: "0.5"
+#         memory: 512MB
+#     labels:
+#       - traefik.enable=true
+#       - traefik.http.routers.rabbitmq_dinastiapi.rule=Host(`rabbitmq.dinastiapi.app`)
+#       - traefik.http.routers.rabbitmq_dinastiapi.entrypoints=websecure
+#       - traefik.http.routers.rabbitmq_dinastiapi.tls.certresolver=letsencryptresolver
+#       - traefik.http.routers.rabbitmq_dinastiapi.service=rabbitmq_dinastiapi
+#       - traefik.http.services.rabbitmq_dinastiapi.loadbalancer.server.port=15672
+#   healthcheck:
+#     test: ["CMD", "rabbitmq-diagnostics", "ping"]
+#     interval: 30s
+#     timeout: 10s
+#     retries: 3
+#     start_period: 60s
+
+# =================== REDIS STREAMS ===================
+# redis_streams_dinastiapi:
+#   image: redis:7
+#   networks:
+#     - network_public
+#   ports:
+#     - target: 6379
+#       published: 6379
+#       protocol: tcp
+#       mode: ingress
+#   volumes:
+#     - redis_streams_data_dinastiapi:/data
+#   deploy:
+#     mode: replicated
+#     replicas: 1
+#     placement:
+#       constraints: [node.role == manager]
+#     restart_policy:
+#       condition: on-failure
+#       delay: 5s
+#       max_attempts: 3
+#   healthcheck:
+#     test: ["CMD", "redis-cli", "PING"]
+#     interval: 10s
+#     timeout: 5s
+#     retries: 5
+#     start_period: 15s
+
+# =================== JAEGER TRACING (OBSERVABILITY) ===================
+# jaeger_dinastiapi:
+#   image: jaegertracing/all-in-one:latest
+#   deploy:
+#     replicas: 1
+#     placement:
+#       constraints:
+#         - node.role == manager
+#     restart_policy:
+#       condition: on-failure
+#       delay: 5s
+#       max_attempts: 3
+#     resources:
+#       limits:
+#         cpus: "1"
+#         memory: 1G
+#       reservations:
+#         cpus: "0.25"
+#         memory: 256M
+#   environment:
+#     # Enable OTLP collector (required for OpenTelemetry)
+#     - COLLECTOR_OTLP_ENABLED=true
+#     # Storage configuration for production
+#     # For development: use memory
+#     # For production: configure external storage (Elasticsearch, Cassandra, etc)
+#     - SPAN_STORAGE_TYPE=memory
+#     - MEMORY_MAX_TRACES=50000
+#     # Sampling configuration
+#     - SAMPLING_STRATEGIES_FILE=/etc/jaeger/sampling_strategies.json
+#   ports:
+#     # Jaeger UI - Web interface to view traces
+#     - target: 16686
+#       published: 16686
+#       protocol: tcp
+#       mode: ingress
+#     # OTLP HTTP receiver - used by DinastiAPI to send traces
+#     - target: 4318
+#       published: 4318
+#       protocol: tcp
+#       mode: ingress
+#     # OTLP gRPC receiver (optional)
+#     - target: 4317
+#       published: 4317
+#       protocol: tcp
+#       mode: ingress
+#     # Jaeger Collector HTTP (legacy - for compatibility)
+#     - target: 14268
+#       published: 14268
+#       protocol: tcp
+#       mode: ingress
+#     # Admin port for health checks
+#     - target: 14269
+#       published: 14269
+#       protocol: tcp
+#       mode: host
+#   networks:
+#     - network_public
+#   healthcheck:
+#     test: ["CMD", "wget", "--spider", "-q", "http://localhost:14269/"]
+#     interval: 30s
+#     timeout: 10s
+#     retries: 3
+#     start_period: 20s
+#   volumes:
+#     - jaeger_data_dinastiapi:/tmp/jaeger
 
 volumes:
   postgres_data_dinastiapi:
