@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>🚀 WhatsApp API Gateway with Multi-Device Support, Dashboard, Webhooks, RabbitMQ, S3 Storage, N8N Nodes Community and Chatwoot Integration</strong>
+  <strong>🚀 WhatsApp API Gateway with Multi-Device Support, Interactive Messages (Buttons, Carousels, Lists), Webhooks, WebSockets, RabbitMQ, SQS, Redis Streams, S3 Storage, N8N Nodes Community and Chatwoot Integration</strong>
 </p>
 
 <p align="center">
@@ -25,20 +25,44 @@
 - **📱 Multi-Device Support**: Suporte completo a múltiplos dispositivos WhatsApp
 - **🔄 Concurrent Sessions**: Múltiplas sessões simultâneas
 - **💌 Rich Messages**: Suporte a mensagens de texto, imagens, vídeos, documentos e mais
+- **🎯 Mensagens Interativas**: Botões, carrosséis (carousels), listas, enquetes e flows
 - **🔗 Webhooks**: Sistema completo de webhooks para eventos em tempo real
+- **🌊 WebSockets**: Streaming de eventos em tempo real via WebSocket
 - **✅ User Verification**: Verificação avançada de usuários
 - **🔐 Authentication**: Sistema de autenticação robusto
 - **🐰 RabbitMQ Integration**: Integração completa com RabbitMQ para mensageria
+- **📨 Amazon SQS**: Suporte a filas SQS para distribuição de eventos
+- **🔴 Redis Streams**: Streaming de eventos via Redis para processamento em tempo real
 - **☁️ S3 Storage**: Armazenamento de mídia em S3 (AWS, MinIO, etc.)
 - **🌐 Proxy Support**: Suporte a proxy para conexões WhatsApp
-- **📢 Newsletter/Channels**: Suporte a newsletters e canais WhatsApp
-- **📢 Grupos/Comunidads**: Suporte a grupos e comunidades do WhatsApp
+- **👥 Grupos e Comunidades**: Gerenciamento completo de grupos e comunidades WhatsApp
+- **📢 Newsletter/Channels**: Suporte a newsletters, canais e comunidades WhatsApp
 - **❤️ System Health**: Monitoramento de saúde do sistema
-
 
 ## 🚀 Quick Start
 
-### Docker (Recomendado)
+## 📡 API Features
+
+### Mensagens Interativas
+- **🎯 Botões**: Crie mensagens com botões de resposta rápida e botões de chamada para ação
+- **📋 Listas**: Envie listas interativas com múltiplas opções organizadas por seções
+- **🎠 Carrosséis**: Apresente produtos e serviços em formato de carrossel com imagens
+- **📊 Enquetes**: Crie enquetes interativas para engajar seus clientes
+- **🔄 Flows**: Suporte completo a WhatsApp Flows para experiências interativas avançadas
+
+### Distribuição de Eventos
+- **🔗 Webhooks HTTP**: Entrega confiável de eventos via HTTP com retry automático
+- **🌊 WebSockets**: Streaming de eventos em tempo real com suporte a múltiplos clientes
+- **📨 Amazon SQS**: Integração com filas SQS (Standard e FIFO) para processamento assíncrono
+- **🔴 Redis Streams**: Publicação de eventos em Redis Streams para consumo distribuído
+- **🐰 RabbitMQ**: Sistema de mensageria enterprise com exchanges e filas dinâmicas
+
+### Armazenamento de Mídia
+- **☁️ S3 Compatible**: AWS S3, MinIO, DigitalOcean Spaces, Google Cloud Storage
+- **📦 Upload/Download**: Gestão automática de mídias com URLs assinadas
+- **⚡ CDN Ready**: URLs públicas otimizadas para integração com CDN
+
+## 🧩 Docker Compose (Swarm) — v1.2.6
 
 ```yml
 # =================== DINASTIAPI STACK PARA PORTAINER ===================
@@ -59,9 +83,14 @@ services:
       # SERVER_IP: Endereço IP público divulgado para integrações externas que exigem IP fixo; deixe vazio se usar DNS.
       - SERVER_IP=
 
+      # Informações adicionais de ambiente para monitoramento/healthcheck
+      - APP_ENV=production
+      - APP_REGION=br-central-1
+      - GIT_COMMIT=prod-build
+
       # =================== ENDEREÇOS DA APLICAÇÃO ===================
       # DINASTIAPI_ADDRESS: URL base publicada em todos os eventos (webhook, filas, sockets) indicando a origem da instância.
-      - DINASTIAPI_ADDRESS=https://go.setupautomatizado.com
+      - DINASTIAPI_ADDRESS=https://api.seudominio.com
       # DINASTIAPI_PORT: Porta HTTP exposta pelo backend; precisa coincidir com o mapeamento de portas do container.
       - DINASTIAPI_PORT=8080
 
@@ -224,9 +253,9 @@ services:
 
       # =================== ARMAZENAMENTO GLOBAL S3 ===================
       # GLOBAL_S3_ENABLED: Controla se mídias globais serão persistidas em um bucket S3.
-      - GLOBAL_S3_ENABLED=true
+      - GLOBAL_S3_ENABLED=false
       # GLOBAL_S3_ENDPOINT: Endpoint HTTP(S) do provedor S3; deixe vazio para AWS padrão.
-      - GLOBAL_S3_ENDPOINT=https://s3.setupautomatizado.com.br
+      - GLOBAL_S3_ENDPOINT=https://s3.dinastiapi.com.br
       # GLOBAL_S3_REGION: Região S3 utilizada na autenticação e geração de URLs.
       - GLOBAL_S3_REGION=us-east-1
       # GLOBAL_S3_BUCKET: Nome do bucket onde as mídias globais serão guardadas.
@@ -238,9 +267,9 @@ services:
       # GLOBAL_S3_PATH_STYLE: Quando true, utiliza path-style URLs (compatível com MinIO/outros provedores).
       - GLOBAL_S3_PATH_STYLE=true
       # GLOBAL_S3_PUBLIC_URL: URL pública usada para montar links acessíveis externamente.
-      - GLOBAL_S3_PUBLIC_URL=https://s3.setupautomatizado.com.br
-      # GLOBAL_S3_MEDIA_DELIVERY: Modo de entrega das mídias nos eventos (base64, s3 ou both).
-      - GLOBAL_S3_MEDIA_DELIVERY=s3
+      - GLOBAL_S3_PUBLIC_URL=https://s3.dinastiapi.com.br
+      # GLOBAL_S3_MEDIA_DELIVERY: Modo de entrega das mídias nos eventos (base64, url ou both).
+      - GLOBAL_S3_MEDIA_DELIVERY=url
       # GLOBAL_S3_RETENTION_DAYS: Quantidade de dias antes de expirar objetos armazenados (0 desativa expiração).
       - GLOBAL_S3_RETENTION_DAYS=1
       # GLOBAL_S3_DISABLE_ACL: Define se ACLs individuais serão suprimidos; true para buckets com Bucket Owner Enforced.
@@ -328,7 +357,7 @@ services:
       # GLOBAL_WEBHOOK_ENABLED: Ativa entrega de eventos para um endpoint global.
       - GLOBAL_WEBHOOK_ENABLED=false
       # GLOBAL_WEBHOOK_URL: Endpoint HTTP que receberá todos os eventos globais.
-      - GLOBAL_WEBHOOK_URL=https://hook.prod.setupautomatizado.com.br/webhook/debug-dinastiapi
+      - GLOBAL_WEBHOOK_URL=https://hook.prod.dinastiapi.com.br/webhook/debug-dinastiapi
       # GLOBAL_WEBHOOK_EVENTS: Eventos filtrados e enviados ao webhook global.
       - GLOBAL_WEBHOOK_EVENTS=All
       # GLOBAL_WEBHOOK_TIMEOUT: Tempo máximo para resposta do webhook global.
@@ -462,7 +491,7 @@ services:
       # SENTRY_PROFILES_SAMPLE_RATE: Percentual de perfis de CPU/memória coletados.
       - SENTRY_PROFILES_SAMPLE_RATE=0.1
 
-      # =================== MÉTRICAS PROMETHEUS ===================
+      # =================== MÉTRICAS PROMETHEUS (em breve) ===================
       # PROMETHEUS_ENABLED: Ativa a exportação de métricas para Prometheus.
       - PROMETHEUS_ENABLED=false
       # PROMETHEUS_METRICS_PATH: Path HTTP exposto com as métricas.
@@ -519,6 +548,36 @@ services:
       # =================== CONTROLE DE ENCERRAMENTO ===================
       # SHUTDOWN_GRACE_PERIOD: Tempo máximo aguardado para finalizar workers antes de encerrar o processo.
       - SHUTDOWN_GRACE_PERIOD=30s
+
+      # =================== EVENT MONITORING SSE CONFIGURATION ===================
+      # Enable real-time event monitoring via Server-Sent Events
+      - MONITORING_ENABLED=false
+      # Maximum concurrent SSE clients connected
+      - MONITORING_MAX_CLIENTS=100
+      # SSE heartbeat interval (keep-alive)
+      - MONITORING_HEARTBEAT_INTERVAL=30s
+      # Event notification buffer size
+      - MONITORING_EVENT_BUFFER_SIZE=10000
+      # Number of worker goroutines processing events
+      - MONITORING_WORKER_COUNT=5
+      # Memory cache TTL for query results
+      - MONITORING_CACHE_TTL=5m
+      # Cache cleanup interval (removes expired entries)
+      - MONITORING_CACHE_CLEANUP_INTERVAL=1m
+      # Session token TTL (for SSE authentication)
+      - MONITORING_SESSION_TOKEN_TTL=5m
+      # Maximum events per page for history endpoint
+      - MONITORING_MAX_PAGE_SIZE=1000
+      # Default page size for history endpoint
+      - MONITORING_DEFAULT_PAGE_SIZE=100
+      # Enable/disable persistence for monitoring events (set to false to keep only in-memory stream)
+      - MONITORING_STORAGE_ENABLED=true
+      # Retention window (in days) for monitoring_events table when storage is enabled
+      - MONITORING_RETENTION_DAYS=7
+      # Interval between automatic prune runs (e.g. 12h, 24h)
+      - MONITORING_PRUNE_INTERVAL=24h
+      # Absolute base URL returned in stream_url (leave empty to fall back to DINASTIAPI_ADDRESS or http://localhost:<port>)
+      - MONITORING_STREAM_BASE_URL=http://localhost:8080
     deploy:
       mode: replicated
       replicas: 1
@@ -774,7 +833,350 @@ networks:
   network_public:
     name: network_public
     external: true
+
 ```
+---
+```yaml
+
+services:
+  manager-dinastiapi:
+  image: dinastiapi/manager-dinastiapi:latest
+    networks:
+      - network_public
+    environment:
+      # Node.js
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+
+      # Database
+      DATABASE_URL: postgresql://dinastiapi:dinastiapi@postgres_manager_dinastiapi:5432/manager_dinastiapi?schema=public
+
+      # Redis
+      REDIS_URL: redis://redis_manager_dinastiapi:6379
+
+      # API Configuration
+      NEXT_PUBLIC_API_URL: https://api.seudominiodaapi.com
+      NEXT_PUBLIC_API_TIMEOUT: 30000
+      NEXT_PUBLIC_API_RETRY_ATTEMPTS: 3
+
+      # Logging
+      NEXT_PUBLIC_LOG_LEVEL: debug
+      NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: true
+      NEXT_PUBLIC_LOG_FORMAT: pretty
+
+      # Timezone
+      TZ: America/Sao_Paulo
+
+      # Worker Concurrency Settings
+      WORKER_CONCURRENCY: 50
+      CAMPAIGN_WORKER_CONCURRENCY: 5
+
+      # Rate Limiting
+      MESSAGE_RATE_LIMIT_MAX: 100000
+      MESSAGE_RATE_LIMIT_DURATION: 1000
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.manager-dinastiapi.rule=Host(`app.seudominiodomanager.com`)
+        - traefik.http.routers.manager-dinastiapi.entrypoints=websecure
+        - traefik.http.routers.manager-dinastiapi.tls.certresolver=letsencryptresolver
+        - traefik.http.services.manager-dinastiapi.loadbalancer.server.port=3000
+        - traefik.http.routers.manager-dinastiapi.service=manager-dinastiapi
+        - traefik.http.services.manager-dinastiapi.loadbalancer.passHostHeader=true
+
+  manager-dinastiapi-workers:
+    image: dinastiapi/manager-dinastiapi:latest
+    networks:
+      - network_public
+    command: ["node", "dist/workers/lib/queue/start-workers.js"]
+    environment:
+      # Node.js
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+
+      # Database
+      DATABASE_URL: postgresql://dinastiapi:dinastiapi@postgres_manager_dinastiapi:5432/manager_dinastiapi?schema=public
+
+      # Redis
+      REDIS_URL: redis://redis_manager_dinastiapi:6379
+
+      # API Configuration
+      NEXT_PUBLIC_API_URL: https://api.dinastiapi.com
+      NEXT_PUBLIC_API_TIMEOUT: 30000
+      NEXT_PUBLIC_API_RETRY_ATTEMPTS: 3
+
+      # Logging
+      NEXT_PUBLIC_LOG_LEVEL: debug
+      NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: true
+      NEXT_PUBLIC_LOG_FORMAT: pretty
+
+      # Timezone
+      TZ: America/Sao_Paulo
+
+      # Worker Concurrency Settings
+      WORKER_CONCURRENCY: 50
+      CAMPAIGN_WORKER_CONCURRENCY: 5
+
+      # Rate Limiting
+      MESSAGE_RATE_LIMIT_MAX: 100000
+      MESSAGE_RATE_LIMIT_DURATION: 1000
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep -v grep | grep -q 'start-workers' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      mode: replicated
+      replicas: 5
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+
+  # ----------------------------------------------------------------------------
+  # PostgreSQL Database
+  # ----------------------------------------------------------------------------
+  postgres_manager_dinastiapi:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dinastiapi
+      POSTGRES_PASSWORD: dinastiapi
+      POSTGRES_DB: manager_dinastiapi
+    volumes:
+      - postgres_manager_dinastiapi_data:/var/lib/postgresql
+    networks:
+      - network_public
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dinastiapi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------------------------
+  # Redis Cache & Queue
+  # ----------------------------------------------------------------------------
+  redis_manager_dinastiapi:
+    image: redis:7
+    restart: unless-stopped
+    command: >
+      redis-server
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --appendonly yes
+    volumes:
+      - redis_manager_dinastiapi_data:/data
+    networks:
+      - network_public
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgres_manager_dinastiapi_data:
+    external: true
+    name: postgres_manager_dinastiapi_data
+  redis_manager_dinastiapi_data:
+    external: true
+    name: redis_manager_dinastiapi_data
+
+networks:
+  network_public:
+    name: network_public
+    external: true
+
+```
+
+## 🎯 Manager DinastiAPI - Plataforma de Gerenciamento Enterprise
+
+**Manager DinastiAPI** é uma plataforma completa de gerenciamento e automação para a DinastiAPI, desenvolvida com Next.js 16, oferecendo uma interface moderna e intuitiva para gerenciar suas instâncias WhatsApp, campanhas de mensagens em massa e monitoramento em tempo real.
+
+### 📸 Screenshots da Interface
+
+<p align="center">
+  <img src="./screenshot-dashboard-dark.png" alt="Dashboard Manager DinastiAPI" width="800">
+  <br>
+  <em>Dashboard com métricas em tempo real e visão geral das instâncias</em>
+</p>
+
+<p align="center">
+  <img src="./screenshot-instancias-dark.png" alt="Gerenciamento de Instâncias" width="800">
+  <br>
+  <em>Gerenciamento completo de instâncias WhatsApp com QR Code e status</em>
+</p>
+
+<p align="center">
+  <img src="./screenshot-eventos-dark.png" alt="Monitoramento de Eventos" width="800">
+  <br>
+  <em>Visualização em tempo real de eventos e mensagens processadas</em>
+</p>
+
+### ✨ Características Principais
+
+#### 🎨 Interface Moderna
+- **Design System**: Construído com shadcn/ui e Tailwind CSS
+- **Dark Mode**: Tema escuro por padrão com suporte a personalização
+- **Responsivo**: Interface adaptável para desktop, tablet e mobile
+- **Real-time Updates**: Atualizações automáticas via WebSocket e Server-Sent Events
+
+#### 📊 Dashboard Completo
+- **Métricas em Tempo Real**: Instâncias ativas, mensagens enviadas/recebidas, taxa de sucesso
+- **Gráficos Interativos**: Visualização de dados com Recharts
+- **Status das Instâncias**: Monitoramento de saúde e conectividade
+- **Histórico de Eventos**: Linha do tempo detalhada de todas as ações
+
+#### 📱 Gerenciamento de Instâncias
+- **Conexão Rápida**: QR Code integrado para autenticação WhatsApp
+- **Multi-Instâncias**: Gerenciamento simultâneo de múltiplas contas
+- **Configurações Avançadas**: Webhooks, S3, RabbitMQ, Redis Streams por instância
+- **Monitoramento**: Status de conexão, última atividade, métricas individuais
+
+#### 🚀 Campanhas de Mensagens em Massa
+- **Envio Programado**: Agendamento de campanhas com data e hora específicas
+- **Importação CSV**: Upload de listas de contatos via arquivo CSV
+- **Templates**: Mensagens com variáveis dinâmicas personalizadas
+- **Rate Limiting**: Controle de velocidade de envio para evitar bloqueios
+- **Relatórios**: Métricas detalhadas de sucesso, falhas e entregas
+
+#### 📈 Análise e Relatórios
+- **Eventos em Tempo Real**: Visualização de mensagens recebidas e enviadas
+- **Filtros Avançados**: Pesquisa por tipo de evento, instância, período
+- **Exportação**: Dados exportáveis em CSV para análise externa
+- **Webhooks History**: Histórico completo de entregas de webhooks
+
+#### 🔐 Segurança e Controle
+- **Autenticação**: Sistema de login com JWT tokens
+- **Permissões**: Controle granular de acesso por usuário
+- **Auditoria**: Logs detalhados de todas as ações administrativas
+- **Rate Limiting**: Proteção contra abuso e uso excessivo
+
+### 🛠️ Stack Tecnológica
+
+```yaml
+Frontend:
+  - Next.js 16 (App Router)
+  - React 19
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  - Recharts
+  - TanStack Query
+  - Zustand
+
+Backend:
+  - Next.js API Routes
+  - Prisma ORM
+  - BullMQ (Workers)
+  - Redis (Cache & Queue)
+  - PostgreSQL 18
+
+Infraestrutura:
+  - Docker & Docker Swarm
+  - Redis 7
+  - PostgreSQL 18
+  - Traefik (Reverse Proxy)
+```
+
+### 📦 Deployment com Docker Swarm
+
+O Manager DinastiAPI é deployado em um stack separado para melhor isolamento e escalabilidade. Você pode conectá-lo à sua API DinastiAPI através de variáveis de ambiente.
+
+#### Pré-requisitos
+```bash
+# Criar volumes externos
+docker volume create postgres_manager_dinastiapi_data
+docker volume create redis_manager_dinastiapi_data
+
+# Garantir que a rede pública existe
+docker network create --driver overlay network_public
+```
+
+#### Deploy via Portainer
+
+1. Acesse o Portainer
+2. Navegue até **Stacks** > **Add Stack**
+3. Cole o conteúdo do arquivo `docker-compose-swarm-manager.yaml`
+4. Ajuste as variáveis de ambiente conforme necessário
+5. Clique em **Deploy the stack**
+
+#### Configuração das Variáveis de Ambiente
+
+```yaml
+# Conexão com a API DinastiAPI
+NEXT_PUBLIC_API_URL: https://api.seudominiodaapi.com
+
+# Database
+DATABASE_URL: postgresql://dinastiapi:dinastiapi@postgres_manager_dinastiapi:5432/manager_dinastiapi?schema=public
+
+# Redis para cache e filas
+REDIS_URL: redis://redis_manager_dinastiapi:6379
+
+# Configurações de Workers
+WORKER_CONCURRENCY: 50              # Workers simultâneos para processamento geral
+CAMPAIGN_WORKER_CONCURRENCY: 5      # Workers dedicados para campanhas
+
+# Rate Limiting
+MESSAGE_RATE_LIMIT_MAX: 100000      # Máximo de mensagens por período
+MESSAGE_RATE_LIMIT_DURATION: 1000   # Duração do período em ms
+
+# Logging
+NEXT_PUBLIC_LOG_LEVEL: info         # Níveis: debug, info, warn, error
+NEXT_PUBLIC_ENABLE_CONSOLE_LOGS: false
+NEXT_PUBLIC_LOG_FORMAT: json        # Formatos: pretty, json
+```
+
+### 🔧 Arquitetura de Workers
+
+O Manager utiliza um sistema de workers baseado em BullMQ para processamento assíncrono:
+
+#### Serviço Principal (manager-dinastiapi)
+- **Réplicas**: 1
+- **Função**: Interface web e API endpoints
+- **Recursos**: 4GB RAM, 1 CPU
+- **Porta**: 3000
+
+#### Workers (manager-dinastiapi-workers)
+- **Réplicas**: 5 (escalável)
+- **Função**: Processamento de campanhas, eventos e tarefas em background
+- **Recursos**: 1GB RAM por worker
+- **Command**: `node dist/workers/lib/queue/start-workers.js`
+
+---
 
 ## 🔧 Integrações
 

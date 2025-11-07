@@ -16,9 +16,14 @@ services:
       # SERVER_IP: Endereço IP público divulgado para integrações externas que exigem IP fixo; deixe vazio se usar DNS.
       - SERVER_IP=
 
+      # Informações adicionais de ambiente para monitoramento/healthcheck
+      - APP_ENV=production
+      - APP_REGION=br-central-1
+      - GIT_COMMIT=prod-build
+
       # =================== ENDEREÇOS DA APLICAÇÃO ===================
       # DINASTIAPI_ADDRESS: URL base publicada em todos os eventos (webhook, filas, sockets) indicando a origem da instância.
-      - DINASTIAPI_ADDRESS=https://go.setupautomatizado.com
+      - DINASTIAPI_ADDRESS=https://api.seudominio.com
       # DINASTIAPI_PORT: Porta HTTP exposta pelo backend; precisa coincidir com o mapeamento de portas do container.
       - DINASTIAPI_PORT=8080
 
@@ -183,7 +188,7 @@ services:
       # GLOBAL_S3_ENABLED: Controla se mídias globais serão persistidas em um bucket S3.
       - GLOBAL_S3_ENABLED=false
       # GLOBAL_S3_ENDPOINT: Endpoint HTTP(S) do provedor S3; deixe vazio para AWS padrão.
-      - GLOBAL_S3_ENDPOINT=https://s3.setupautomatizado.com.br
+      - GLOBAL_S3_ENDPOINT=https://s3.dinastiapi.com.br
       # GLOBAL_S3_REGION: Região S3 utilizada na autenticação e geração de URLs.
       - GLOBAL_S3_REGION=us-east-1
       # GLOBAL_S3_BUCKET: Nome do bucket onde as mídias globais serão guardadas.
@@ -195,7 +200,7 @@ services:
       # GLOBAL_S3_PATH_STYLE: Quando true, utiliza path-style URLs (compatível com MinIO/outros provedores).
       - GLOBAL_S3_PATH_STYLE=true
       # GLOBAL_S3_PUBLIC_URL: URL pública usada para montar links acessíveis externamente.
-      - GLOBAL_S3_PUBLIC_URL=https://s3.setupautomatizado.com.br
+      - GLOBAL_S3_PUBLIC_URL=https://s3.dinastiapi.com.br
       # GLOBAL_S3_MEDIA_DELIVERY: Modo de entrega das mídias nos eventos (base64, url ou both).
       - GLOBAL_S3_MEDIA_DELIVERY=url
       # GLOBAL_S3_RETENTION_DAYS: Quantidade de dias antes de expirar objetos armazenados (0 desativa expiração).
@@ -285,7 +290,7 @@ services:
       # GLOBAL_WEBHOOK_ENABLED: Ativa entrega de eventos para um endpoint global.
       - GLOBAL_WEBHOOK_ENABLED=false
       # GLOBAL_WEBHOOK_URL: Endpoint HTTP que receberá todos os eventos globais.
-      - GLOBAL_WEBHOOK_URL=https://hook.prod.setupautomatizado.com.br/webhook/debug-dinastiapi
+      - GLOBAL_WEBHOOK_URL=https://hook.prod.dinastiapi.com.br/webhook/debug-dinastiapi
       # GLOBAL_WEBHOOK_EVENTS: Eventos filtrados e enviados ao webhook global.
       - GLOBAL_WEBHOOK_EVENTS=All
       # GLOBAL_WEBHOOK_TIMEOUT: Tempo máximo para resposta do webhook global.
@@ -476,6 +481,36 @@ services:
       # =================== CONTROLE DE ENCERRAMENTO ===================
       # SHUTDOWN_GRACE_PERIOD: Tempo máximo aguardado para finalizar workers antes de encerrar o processo.
       - SHUTDOWN_GRACE_PERIOD=30s
+
+      # =================== EVENT MONITORING SSE CONFIGURATION ===================
+      # Enable real-time event monitoring via Server-Sent Events
+      - MONITORING_ENABLED=false
+      # Maximum concurrent SSE clients connected
+      - MONITORING_MAX_CLIENTS=100
+      # SSE heartbeat interval (keep-alive)
+      - MONITORING_HEARTBEAT_INTERVAL=30s
+      # Event notification buffer size
+      - MONITORING_EVENT_BUFFER_SIZE=10000
+      # Number of worker goroutines processing events
+      - MONITORING_WORKER_COUNT=5
+      # Memory cache TTL for query results
+      - MONITORING_CACHE_TTL=5m
+      # Cache cleanup interval (removes expired entries)
+      - MONITORING_CACHE_CLEANUP_INTERVAL=1m
+      # Session token TTL (for SSE authentication)
+      - MONITORING_SESSION_TOKEN_TTL=5m
+      # Maximum events per page for history endpoint
+      - MONITORING_MAX_PAGE_SIZE=1000
+      # Default page size for history endpoint
+      - MONITORING_DEFAULT_PAGE_SIZE=100
+      # Enable/disable persistence for monitoring events (set to false to keep only in-memory stream)
+      - MONITORING_STORAGE_ENABLED=true
+      # Retention window (in days) for monitoring_events table when storage is enabled
+      - MONITORING_RETENTION_DAYS=7
+      # Interval between automatic prune runs (e.g. 12h, 24h)
+      - MONITORING_PRUNE_INTERVAL=24h
+      # Absolute base URL returned in stream_url (leave empty to fall back to DINASTIAPI_ADDRESS or http://localhost:<port>)
+      - MONITORING_STREAM_BASE_URL=http://localhost:8080
     deploy:
       mode: replicated
       replicas: 1
