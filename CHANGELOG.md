@@ -1,9 +1,24 @@
-# 📋 Changelog
+# 📋 Changelog - DinastiAPI
 
-Todas as mudanças importantes neste projeto serão documentadas neste arquivo.
+## [v1.4.3] - 2025-12-08
 
-O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+### ✨ Novidades desta Versão
+
+Para detalhes completos, veja a [release v1.4.3](https://github.com/DinastIA-UK/use-dinastiapi/releases/tag/v1.4.3).
+
+### 📦 Pacotes Disponíveis
+
+- Linux AMD64: `linux-amd64-v1.4.3.tar.gz`
+- Linux ARM64: `linux-arm64-v1.4.3.tar.gz`
+- macOS Intel: `darwin-amd64-v1.4.3.tar.gz`
+- macOS Apple Silicon: `darwin-arm64-v1.4.3.tar.gz`
+- Windows: `windows-amd64-v1.4.3.zip`
+
+### 🔐 Verificação
+
+Valide a integridade com: `sha256sum -c checksums.txt`
+
+---
 
 ## [v1.2.6] - 2025-11-06
 
