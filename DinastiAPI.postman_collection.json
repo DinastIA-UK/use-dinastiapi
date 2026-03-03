@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "8fd983e1-651e-47a8-94ca-b5b1ebc4162d",
-    "name": "DINASTIAPI v1.7.0",
-    "description": "DINASTIAPI implements a multi user and multi device REST API for WhatsApp.\n\n<h2>Authentication</h2><ul><li>Standard Endpoints: Include the token header with a valid user token (matches tokens stored in the users database table).</li><li>Admin Endpoints: Use the Authorization header with the admin token (set in .env as DINASTIAPI_ADMIN_TOKEN).</li></ul><h2>Admin Setup:</h2>You can manage users and do some tests by using the builtin dashboard [here](/dashboard).<h3>Add a Sample User via API</h3>Run this command to create a test user:<pre><code>curl -X POST http://localhost:8080/admin/users \\ \n-H \"Authorization: $DINASTIAPI_ADMIN_TOKEN\" \\ \n-H \"Content-Type: application/json\" \\ \n-d '{\"name\": \"John\", \"token\": \"Z1234ABCCXD\"}' </code> </pre>\n\n<h2>Webhook Configuration</h2>To receive WhatsApp messages:<ul><li>Host your own server (to process incoming messages).</li><li>Set its URL as the webhook via the [webhook](#Webhook) API call.</li></ul><h2>Phone number format:</h2><ul><li>Required: Country code (e.g. <b>5491155553934</b> for Argentina</li><li>Do not prefix with a plus sign (+), as natively whatsapp requires no plus sign prefix.</li></ul>\n\n<h2>Global Dispatcher Flags &amp; API Echo</h2><p>Configure tenant-level skips for the shared dispatcher via <code>/session/globaltransports/config</code> and toggle <code>Info.IsFromAPI</code> emission through <code>/session/echo/api</code>. Both flows are surfaced in the dashboard and Postman collection.</p>\n\n🔗 **Generated from OpenAPI 3.0 Specification**\n📅 Generated: 2/23/2026, 4:43:25 PM\n🚀 Complete API collection with all endpoints\n\n**Authentication:**\n- Standard Endpoints: Use {{api_token}} header\n- Admin Endpoints: Use {{admin_token}} header\n\n**Variables:**\n- {{base_url}} - API base URL\n- {{api_token}} - Your user authentication token\n- {{admin_token}} - Admin authentication token",
+    "_postman_id": "dc69e2b0-32e6-4701-bcca-a36421007e0d",
+    "name": "DINASTIAPI v1.9.0",
+    "description": "DINASTIAPI implements a multi user and multi device REST API for WhatsApp.\n\n<h2>Authentication</h2><ul><li>Standard Endpoints: Include the token header with a valid user token (matches tokens stored in the users database table).</li><li>Admin Endpoints: Use the Authorization header with the admin token (set in .env as DINASTIAPI_ADMIN_TOKEN).</li></ul><h2>Admin Setup:</h2>You can manage users and do some tests by using the builtin dashboard [here](/dashboard).<h3>Add a Sample User via API</h3>Run this command to create a test user:<pre><code>curl -X POST http://localhost:8080/admin/users \\ \n-H \"Authorization: $DINASTIAPI_ADMIN_TOKEN\" \\ \n-H \"Content-Type: application/json\" \\ \n-d '{\"name\": \"John\", \"token\": \"Z1234ABCCXD\"}' </code> </pre>\n\n<h2>Webhook Configuration</h2>To receive WhatsApp messages:<ul><li>Host your own server (to process incoming messages).</li><li>Set its URL as the webhook via the [webhook](#Webhook) API call.</li></ul><h2>Phone number format:</h2><ul><li>Required: Country code (e.g. <b>5491155553934</b> for Argentina</li><li>Do not prefix with a plus sign (+), as natively whatsapp requires no plus sign prefix.</li></ul>\n\n<h2>Global Dispatcher Flags &amp; API Echo</h2><p>Configure tenant-level skips for the shared dispatcher via <code>/session/globaltransports/config</code> and toggle <code>Info.IsFromAPI</code> emission through <code>/session/echo/api</code>. Both flows are surfaced in the dashboard and Postman collection.</p>\n\n🔗 **Generated from OpenAPI 3.0 Specification**\n📅 Generated: 3/3/2026, 12:41:37 AM\n🚀 Complete API collection with all endpoints\n\n**Authentication:**\n- Standard Endpoints: Use {{api_token}} header\n- Admin Endpoints: Use {{admin_token}} header\n\n**Variables:**\n- {{base_url}} - API base URL\n- {{api_token}} - Your user authentication token\n- {{admin_token}} - Admin authentication token",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -365,7 +365,7 @@
         },
         {
           "name": "List instance connection status",
-          "description": "Retrieve a lightweight paginated view of instance connection health using runtime state when available and database fallback when no in-memory client is present.\n\n**Endpoint:** `GET /admin/instances/status`\n**Tags:** Admin",
+          "description": "Retrieve a lightweight paginated view of instance connection health using runtime state when available and database fallback when no in-memory client is present. Includes QR code data (base64 PNG and raw text) for instances pending pairing.\n\n**Endpoint:** `GET /admin/instances/status`\n**Tags:** Admin",
           "request": {
             "method": "GET",
             "header": [
@@ -473,7 +473,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"code\": 200,\n  \"data\": [\n    {\n      \"id\": \"4721ca1031bc81b888efc7f407e455ad\",\n      \"name\": \"teste-api-com-s3\",\n      \"jid\": \"5511999999999@s.whatsapp.net\",\n      \"connected\": true,\n      \"loggedIn\": true,\n      \"hasClient\": true,\n      \"connectionHealth\": \"connected\",\n      \"lastSuccessfulConnect\": 1740248400,\n      \"autoReconnectErrors\": 0,\n      \"enableAutoReconnect\": false,\n      \"source\": \"runtime\",\n      \"timestamp\": \"2026-02-22T15:05:00Z\"\n    }\n  ],\n  \"pagination\": {\n    \"limit\": 200,\n    \"offset\": 0,\n    \"has_more\": false,\n    \"next_offset\": null\n  },\n  \"success\": true\n}"
+              "body": "{\n  \"code\": 200,\n  \"data\": [\n    {\n      \"id\": \"4721ca1031bc81b888efc7f407e455ad\",\n      \"name\": \"teste-api-com-s3\",\n      \"jid\": \"5511999999999@s.whatsapp.net\",\n      \"qrcode\": \"\",\n      \"qrcode_text\": \"\",\n      \"connected\": true,\n      \"loggedIn\": true,\n      \"hasClient\": true,\n      \"connectionHealth\": \"connected\",\n      \"lastSuccessfulConnect\": 1740248400,\n      \"autoReconnectErrors\": 0,\n      \"enableAutoReconnect\": false,\n      \"source\": \"runtime\",\n      \"timestamp\": \"2026-02-22T15:05:00Z\"\n    }\n  ],\n  \"pagination\": {\n    \"limit\": 200,\n    \"offset\": 0,\n    \"has_more\": false,\n    \"next_offset\": null\n  },\n  \"success\": true\n}"
             }
           ],
           "event": []
@@ -2629,8 +2629,85 @@
       ]
     },
     {
-      "name": "👤 User (13 endpoints)",
-      "description": "User related endpoints - 13 requests available",
+      "name": "📋 Session Presence (2 endpoints)",
+      "description": "Session Presence related endpoints - 2 requests available",
+      "item": [
+        {
+          "name": "Configure Auto Presence Unavailable",
+          "description": "Enable or disable automatic presence unavailable after connection.\nWhen enabled, the system sends PresenceUnavailable 3 seconds after the protocol-required PresenceAvailable,\npreserving push notifications on the phone while keeping the API session active.\n\nBehavior:\n- Default: false (standard behavior - stays as Available after connection)\n- When enabled: Available → 3s delay → Unavailable (phone keeps receiving push notifications)\n- The PresenceAvailable is still sent first (required for WhatsApp protocol handshake)\n- Manual presence control via POST /user/presence is not affected\n\n\n**Endpoint:** `POST /session/presence/config`\n**Tags:** Session Presence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{api_token}}",
+                "type": "text",
+                "description": "🔑 User authentication token"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "description": "📦 JSON request payload"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/session/presence/config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "session",
+                "presence",
+                "config"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"enabled\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "name": "Get Auto Presence Unavailable Configuration",
+          "description": "Retrieves the current auto presence unavailable configuration for the authenticated user.\n\n\n**Endpoint:** `GET /session/presence/config`\n**Tags:** Session Presence",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{api_token}}",
+                "type": "text",
+                "description": "🔑 User authentication token"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/session/presence/config",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "session",
+                "presence",
+                "config"
+              ]
+            }
+          },
+          "response": [],
+          "event": []
+        }
+      ]
+    },
+    {
+      "name": "👤 User (16 endpoints)",
+      "description": "User related endpoints - 16 requests available",
       "item": [
         {
           "name": "Add or update a contact",
@@ -2792,6 +2869,49 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"phone\": \"5491155553934\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": []
+        },
+        {
+          "name": "Get comprehensive contact information",
+          "description": "Retrieve comprehensive information about a WhatsApp contact by combining data from multiple sources.\nAccepts a phone number (international format without +), a JID (e.g., 5511999999999@s.whatsapp.net),\nor a LID (e.g., 123456@lid).\n\n**Data Sources Combined:**\n- **IsOnWhatsApp**: Registration status and verified name\n- **GetUserInfo**: About/status, picture ID, devices, LID, verified name\n- **GetProfilePictureInfo**: Avatar URL and direct path\n- **GetBusinessProfile**: Email, address, categories, business hours\n- **Store.Contacts**: Cached names (push name, business name, full name)\n- **Store.LIDs**: LID ↔ phone number mapping\n\n**Input Formats:**\n- Phone number: `5511999999999` (international format without +)\n- JID: `5511999999999@s.whatsapp.net`\n- LID: `123456@lid` (will be resolved to phone number first)\n\n**Important Notes:**\n- If a LID is provided, it is resolved to a phone number JID before fetching data\n- If the number is not registered on WhatsApp, only basic info is returned with null fields\n- Business profile data is only available for WhatsApp Business accounts\n- Avatar URL has a temporary expiration and should be consumed promptly\n\n\n**Endpoint:** `POST /user/contact/info`\n**Tags:** User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{api_token}}",
+                "type": "text",
+                "description": "🔑 User authentication token"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "description": "📦 JSON request payload"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/contact/info",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "contact",
+                "info"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"5511999999999\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -3061,6 +3181,69 @@
           "event": []
         },
         {
+          "name": "Remove profile photo",
+          "description": "Remove the authenticated user's own WhatsApp profile photo.\n\nAfter removal, the profile will display the default WhatsApp placeholder avatar (grey silhouette).\n\n**Important Notes:**\n- This action is immediate and irreversible (the previous photo is permanently deleted from WhatsApp servers)\n- All contacts will see the default placeholder avatar\n- No request body is required\n\n\n**Endpoint:** `POST /user/photo/remove`\n**Tags:** User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{api_token}}",
+                "type": "text",
+                "description": "🔑 User authentication token"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/photo/remove",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "photo",
+                "remove"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Profile photo removed successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "token",
+                    "value": "{{api_token}}",
+                    "type": "text",
+                    "description": "🔑 User authentication token"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/user/photo/remove",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "user",
+                    "photo",
+                    "remove"
+                  ]
+                }
+              },
+              "status": "Profile photo removed successfully",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"data\": {\n    \"Details\": \"Profile photo removed successfully\"\n  },\n  \"success\": true\n}"
+            }
+          ],
+          "event": []
+        },
+        {
           "name": "Send user global presence",
           "description": "Sends user presence Available or Unavailable\n\n**Endpoint:** `POST /user/presence`\n**Tags:** User",
           "request": {
@@ -3100,6 +3283,97 @@
             }
           },
           "response": [],
+          "event": []
+        },
+        {
+          "name": "Set profile photo",
+          "description": "Set or update the authenticated user's own WhatsApp profile photo.\n\n**Accepted input formats:**\n- **Base64 data URL**: `\"data:image/jpeg;base64,/9j/4AAQ...\"` — inline JPEG encoded as data URL\n- **HTTP/HTTPS URL**: `\"https://example.com/photo.jpg\"` — remote image URL (will be downloaded server-side)\n\n**Image requirements:**\n- **Format**: JPEG only (`.jpg` / `.jpeg`). Other formats (PNG, GIF, WebP) are **not accepted** by WhatsApp and will be rejected\n- **Maximum resolution**: 640x640 pixels (images larger than this may be rejected by WhatsApp)\n- **Minimum resolution**: No strict minimum, but very small images may appear pixelated\n- **File size**: No strict limit, but recommended under 5MB for optimal processing\n- **Aspect ratio**: Square (1:1) is recommended. Non-square images may be cropped by WhatsApp clients\n\n**How it works internally:**\nUses the WhatsApp `w:profile:picture` IQ namespace with an empty JID target, which tells the server to update the authenticated user's own profile picture rather than a group photo.\n\n**Important Notes:**\n- Changes propagate to all contacts immediately\n- The previous profile photo is replaced (not archived)\n- To remove the photo entirely, use the `/user/photo/remove` endpoint\n\n\n**Endpoint:** `POST /user/photo`\n**Tags:** User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "token",
+                "value": "{{api_token}}",
+                "type": "text",
+                "description": "🔑 User authentication token"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "description": "📦 JSON request payload"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/user/photo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "user",
+                "photo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"Image\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Profile photo set successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "token",
+                    "value": "{{api_token}}",
+                    "type": "text",
+                    "description": "🔑 User authentication token"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text",
+                    "description": "📦 JSON request payload"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/user/photo",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "user",
+                    "photo"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"Image\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Profile photo set successfully",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": 200,\n  \"data\": {\n    \"Details\": \"Profile photo set successfully\",\n    \"PictureID\": \"1729003008\"\n  },\n  \"success\": true\n}"
+            }
+          ],
           "event": []
         },
         {
@@ -4202,7 +4476,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "// 📅 MESSAGE EVENT - Calendar Event Invitation\n// 💡 Sends a structured calendar event that can be added to calendar\n// ✅ Available in ALL license types (Basic, Standard, Enterprise)\n//\n// Use Cases:\n// - Meeting invitations (team meetings, client calls)\n// - Event promotions (webinars, conferences, workshops)\n// - Appointment reminders (doctor, salon, delivery)\n// - Class schedules (courses, training sessions)\n//\n// Field Guide:\n// - phone: Recipient phone number\n// - name: Event title/name (max 80 chars)\n// - description: Event details and agenda (supports markdown)\n// - location: Event location (name, address, or coordinates)\n//   - Name: Location name (e.g., \"Conference Room A\")\n//   - DegreesLatitude: GPS latitude (-90 to 90)\n//   - DegreesLongitude: GPS longitude (-180 to 180)\n// - start_time: Event start (Unix timestamp in seconds)\n// - end_time: Event end (Unix timestamp in seconds)\n// - call_type: Type of call/meeting (\"voice\" | \"video\")\n\n{\n  \"phone\": \"{{test_phone}}\",\n  \"name\": \"🚀 Product Launch Strategy Meeting\",\n  \"description\": \"**Agenda:**\\n\\n1. Q4 Product Roadmap Review (20min)\\n2. Marketing Campaign Strategy (30min)\\n3. Budget Allocation Discussion (20min)\\n4. Action Items & Next Steps (10min)\\n\\n**Required:**\\nPlease review the attached deck before the meeting.\\n\\n**Meeting Link:**\\nhttps://meet.company.com/launch-strategy\",\n  \"location\": {\n    \"Name\": \"Conference Room A, Main Office - 5th Floor\",\n    \"DegreesLatitude\": -23.5505,\n    \"DegreesLongitude\": -46.6333\n  },\n  \"start_time\": 1771951405,  // Tomorrow at current time\n  \"end_time\": 1771956805,     // 1.5 hours duration\n  \"call_type\": \"video\",\n\n  // Optional fields (uncomment to use):\n  // \"quoted\": \"MESSAGE_ID_HERE\",     // Reply to specific message\n  // \"ContextInfo\": {                 // Advanced context\n  //   \"MentionedJID\": [               // Mention participants\n  //     \"{{test_phone}}@s.whatsapp.net\",\n  //     \"5521979232690@s.whatsapp.net\"\n  //   ]\n  // }\n}\n\n// 💡 Timestamp Helper:\n// Current time: 1771865005\n// +1 hour: 1771868605\n// +1 day: 1771951405\n// +1 week: 1772469805",
+              "raw": "// 📅 MESSAGE EVENT - Calendar Event Invitation\n// 💡 Sends a structured calendar event that can be added to calendar\n// ✅ Available in ALL license types (Basic, Standard, Enterprise)\n//\n// Use Cases:\n// - Meeting invitations (team meetings, client calls)\n// - Event promotions (webinars, conferences, workshops)\n// - Appointment reminders (doctor, salon, delivery)\n// - Class schedules (courses, training sessions)\n//\n// Field Guide:\n// - phone: Recipient phone number\n// - name: Event title/name (max 80 chars)\n// - description: Event details and agenda (supports markdown)\n// - location: Event location (name, address, or coordinates)\n//   - Name: Location name (e.g., \"Conference Room A\")\n//   - DegreesLatitude: GPS latitude (-90 to 90)\n//   - DegreesLongitude: GPS longitude (-180 to 180)\n// - start_time: Event start (Unix timestamp in seconds)\n// - end_time: Event end (Unix timestamp in seconds)\n// - call_type: Type of call/meeting (\"voice\" | \"video\")\n\n{\n  \"phone\": \"{{test_phone}}\",\n  \"name\": \"🚀 Product Launch Strategy Meeting\",\n  \"description\": \"**Agenda:**\\n\\n1. Q4 Product Roadmap Review (20min)\\n2. Marketing Campaign Strategy (30min)\\n3. Budget Allocation Discussion (20min)\\n4. Action Items & Next Steps (10min)\\n\\n**Required:**\\nPlease review the attached deck before the meeting.\\n\\n**Meeting Link:**\\nhttps://meet.company.com/launch-strategy\",\n  \"location\": {\n    \"Name\": \"Conference Room A, Main Office - 5th Floor\",\n    \"DegreesLatitude\": -23.5505,\n    \"DegreesLongitude\": -46.6333\n  },\n  \"start_time\": 1772584897,  // Tomorrow at current time\n  \"end_time\": 1772590297,     // 1.5 hours duration\n  \"call_type\": \"video\",\n\n  // Optional fields (uncomment to use):\n  // \"quoted\": \"MESSAGE_ID_HERE\",     // Reply to specific message\n  // \"ContextInfo\": {                 // Advanced context\n  //   \"MentionedJID\": [               // Mention participants\n  //     \"{{test_phone}}@s.whatsapp.net\",\n  //     \"5521979232690@s.whatsapp.net\"\n  //   ]\n  // }\n}\n\n// 💡 Timestamp Helper:\n// Current time: 1772498497\n// +1 hour: 1772502097\n// +1 day: 1772584897\n// +1 week: 1773103297",
               "options": {
                 "raw": {
                   "language": "json"
