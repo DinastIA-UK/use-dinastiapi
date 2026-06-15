@@ -902,7 +902,7 @@ install_traefik() {
 version: '3.7'
 services:
   traefik:
-    image: traefik:v3.0.1
+    image: traefik:v3.6.13
     hostname: "{{.Service.Name}}.{{.Task.Slot}}"
     command:
       - "--api.dashboard=true"
