@@ -107,7 +107,7 @@ show_logo() {
     echo -e "${MAGENTA}════════════════════════════════════════════════════════════════════════════════"
     echo ""
     echo -e "${YELLOW}🚀 Docker Swarm - Instalador Completo de Cluster"
-    echo -e "${NC}📋 Versão: 1.0 | Criado por: Guilherme Jansen"
+    echo -e "${NC}📋 Versão: 2.0 | Criado por: Guilherme Jansen"
     echo -e "${NC}"
     echo ""
 }
