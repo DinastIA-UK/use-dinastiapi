@@ -1,5 +1,25 @@
 # 📋 Changelog - DinastiAPI
 
+## [v1.18.1] - 2026-08-10
+
+### ✨ Novidades desta Versão
+
+Para detalhes completos, veja a [release v1.18.1](https://github.com/DinastIA-UK/use-dinastiapi/releases/tag/v1.18.1).
+
+### 📦 Pacotes Disponíveis
+
+- Linux AMD64: `linux-amd64-v1.18.1.tar.gz`
+- Linux ARM64: `linux-arm64-v1.18.1.tar.gz`
+- macOS Intel: `darwin-amd64-v1.18.1.tar.gz`
+- macOS Apple Silicon: `darwin-arm64-v1.18.1.tar.gz`
+- Windows: `windows-amd64-v1.18.1.zip`
+
+### 🔐 Verificação
+
+Valide a integridade com: `sha256sum -c checksums.txt`
+
+---
+
 ## [v1.17.0] - 2026-07-15
 
 ### ✨ Novidades desta Versão
