@@ -35,7 +35,7 @@ services:
 
       # =================== AUTENTICAÇÃO INTERNA ===================
       # DINASTIAPI_ADMIN_TOKEN: Token estático exigido em endpoints administrativos protegidos da API.
-      - DINASTIAPI_ADMIN_TOKEN=SEU_ADMIN_TOKEN_AQUI_ADMIN_TOKEN_AQUI
+      - DINASTIAPI_ADMIN_TOKEN=SEU_ADMIN_TOKEN_AQUI
 
       # =================== IDENTIDADE DA SESSÃO ===================
       # SESSION_DEVICE_NAME (opcional, NÃO definido por padrão): sobrescreve o osName da
@@ -51,6 +51,10 @@ services:
       # exibindo o nome antigo até desconectar e parear novamente (novo QR / pair code).
       # TZ: Timezone padrão utilizado por logs, agendadores e conversões de horário.
       - TZ=America/Sao_Paulo
+
+      # Estado persistente dos nós tsnet por sessão. Sem este volume, uma
+      # recriação do container exige nova auth key JIT e mantém a rota bloqueada.
+      - NETWORK_ROUTE_STATE_DIR=/app/network-routes
 
       # ========== CONFIGURAÇÕES PADRÃO DE DISPOSITIVO WHATSAPP ==========
       # ========================================
@@ -447,7 +451,7 @@ services:
       # TRACING_SERVICE_NAME: Nome lógico do serviço reportado ao tracer.
       - TRACING_SERVICE_NAME=dinastiapi
       # TRACING_SERVICE_VERSION: Versão reportada nas tags de tracing.
-      - TRACING_SERVICE_VERSION=v1.18.1
+      - TRACING_SERVICE_VERSION=v1.19.0 # x-release-please-version
       # TRACING_ENVIRONMENT: Identificador do ambiente (development, staging, production).
       - TRACING_ENVIRONMENT=development
 
@@ -548,6 +552,8 @@ services:
       - MONITORING_PRUNE_INTERVAL=24h
       # Absolute base URL returned in stream_url (leave empty to fall back to DINASTIAPI_ADDRESS or http://localhost:<port>)
       - MONITORING_STREAM_BASE_URL=http://localhost:8080
+    volumes:
+      - network_route_state_dinastiapi:/app/network-routes
     networks:
       - dinastiapi-network
     restart: on-failure
@@ -675,6 +681,7 @@ networks:
 
 volumes:
   postgres_data_dinastiapi:
+  network_route_state_dinastiapi:
   # rabbitmq_data_dinastiapi:
   # redis_data_dinastiapi:
   # mysql_data_dinastiapi:
