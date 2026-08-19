@@ -30,11 +30,21 @@ Este é um instalador completo e interativo que configura automaticamente um amb
 
 ## 🖥️ Sistemas Operacionais Suportados
 
-- **Debian 11/12**
-- **Ubuntu 20.04 LTS**
-- **Ubuntu 22.04 LTS**
-- **Ubuntu 24.04 LTS**
-- **Oracle Linux 8**
+- **Debian** 11 · 12 · 13 (trixie) · testing/sid
+- **Ubuntu** 20.04 → 26.04 (todas as intermediárias)
+- **Derivados Debian/Ubuntu** Linux Mint · Pop!_OS · Zorin · elementary · KDE neon · Kali · Raspberry Pi OS · Devuan · MX
+- **RHEL family** RHEL · CentOS Stream · Rocky · AlmaLinux · Oracle Linux — 8 · 9 · 10
+- **Fedora** 38 → 44
+- **Amazon Linux** 2023
+- **SUSE** SLES 15 · openSUSE Leap/Tumbleweed
+- **Arch family** Arch · Manjaro · EndeavourOS
+- **Alpine** 3.x (OpenRC, sem systemd)
+- **Qualquer outra** → fallback automático para o instalador oficial `get.docker.com`
+
+> O sistema é detectado sozinho — não há menu de seleção. O instalador **sonda o
+> índice real do `download.docker.com`** para descobrir qual repositório existe
+> para a sua versão, então distribuições novas passam a funcionar sem alterar o
+> script.
 
 ---
 
@@ -99,7 +109,7 @@ ssh -p 2222 root@seu-servidor.com
 Após conectar à VPS via SSH, execute o comando abaixo:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DinastIA-UK/use-dinastiapi/main/VPS/instalar-docker-swarm.sh | bash
+curl -fsSL https://raw.githubusercontent.com/DinastIA-UK/use-dinastiapi/main/VPS/instalar-docker-swarm.sh | sudo bash
 ```
 
 ### Instalação Manual (Alternativa)
@@ -113,9 +123,22 @@ curl -fsSL https://raw.githubusercontent.com/DinastIA-UK/use-dinastiapi/main/VPS
 # 2. Dar permissão de execução
 chmod +x instalar-docker-swarm.sh
 
-# 3. Executar o instalador
-./instalar-docker-swarm.sh
+# 3. Executar o instalador (precisa de root)
+sudo bash instalar-docker-swarm.sh
 ```
+
+### Outras formas de usar
+
+```bash
+sudo bash instalar-docker-swarm.sh --status      # o que já foi feito nesta máquina
+sudo bash instalar-docker-swarm.sh --doctor      # diagnóstico do host e do cluster
+sudo bash instalar-docker-swarm.sh --dry-run     # ensaio: mostra tudo, não altera nada
+sudo bash instalar-docker-swarm.sh --skip ssh,traefik,portainer
+sudo bash instalar-docker-swarm.sh --help        # todas as opções
+```
+
+A instalação é **retomável**: se cair no meio, rode de novo e ela continua de
+onde parou (estado em `~/.setup_state/installation_state.conf`).
 
 ---
 
@@ -123,13 +146,14 @@ chmod +x instalar-docker-swarm.sh
 
 O instalador é **interativo** e guiará você através das seguintes etapas:
 
-### 1️⃣ Seleção do Sistema Operacional
+### 1️⃣ Detecção do Sistema Operacional
+Automática — não há nada a escolher. O instalador lê `/etc/os-release`, resolve
+a família e sonda o repositório real do Docker para a sua versão:
+
 ```
-Escolha a opção correspondente:
-1 - Debian 11/12
-2 - Ubuntu 20.04/22.04
-3 - Oracle Linux 8
-4 - Ubuntu 24.04
+[..] OK: Debian GNU/Linux 13 (trixie)
+[..] INFO: família=debian · pacotes=apt · init=systemd · arch=x86_64
+[..] OK: Repositório Docker: https://download.docker.com/linux/debian trixie stable
 ```
 
 ### 2️⃣ Atualização do Sistema
