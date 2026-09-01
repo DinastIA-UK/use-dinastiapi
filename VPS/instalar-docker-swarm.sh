@@ -3,7 +3,7 @@
 #  Setup Automatizado — Instalador Completo de Cluster Docker Swarm
 # ============================================================================
 #  Autor:    Guilherme Jansen  ·  Setup Automatizado LTDA
-#  Versão:   3.0.0
+#  Versão:   3.0.1
 #  Licença:  MIT
 #
 #  COMPATIBILIDADE (detecção automática, sem menu de SO):
@@ -42,6 +42,20 @@
 # ----------------------------------------------------------------------------
 #  CHANGELOG
 # ----------------------------------------------------------------------------
+#  v3.0.1
+#    - FIX CRÍTICO: `systemctl enable --now nftables` carregava o
+#      `/etc/nftables.conf` da distro enquanto o Docker já estava ativo. Em
+#      Debian 13 esse arquivo executa `flush ruleset`, apaga a chain `DOCKER`
+#      e faz toda task com porta publicada falhar no DNAT. O fragmento agora é
+#      aplicado diretamente e o serviço é apenas habilitado para o próximo boot.
+#    - Detecta a chain de NAT ausente e oferece reiniciar o Docker para
+#      reconstruí-la antes de publicar o Traefik (inclusive ao retomar uma
+#      instalação interrompida).
+#    - `docker stack deploy` agora roda destacado; o polling e o diagnóstico do
+#      próprio instalador deixam de ficar presos esperando convergência.
+#    - Reconcilia Traefik/Portainer pelo número de réplicas, não apenas pela
+#      existência do serviço: `0/1` volta corretamente para a etapa pendente.
+#
 #  v3.0.0
 #    ── Correções de bugs que quebravam a execução ──
 #    - FIX CRÍTICO: `[ "$OS_CHOICE" -eq 0 ]` estourava
@@ -163,7 +177,7 @@ DOCKER_LOG_DRIVER="${DOCKER_LOG_DRIVER:-local}"
 # ============================================================================
 #  CONSTANTES INTERNAS
 # ============================================================================
-readonly SCRIPT_VERSION="3.0.0"
+readonly SCRIPT_VERSION="3.0.1"
 readonly SCRIPT_NAME="${0##*/}"
 readonly DOCKER_CHANNEL="stable"
 readonly DOCKER_MIRROR="https://download.docker.com/linux"
@@ -798,6 +812,21 @@ detect_os() {
     state_set OS_FAMILY_S "$OS_FAMILY"
 }
 
+# Retorna sucesso somente quando o serviço existe e todas as réplicas
+# desejadas estão ativas. A mera existência não basta: um serviço 0/1 é uma
+# instalação pendente e precisa voltar ao passo correspondente.
+service_replicas_converged() {
+    local name="$1" replicas running desired
+    replicas="$(docker service ls --format '{{.Name}} {{.Replicas}}' 2>/dev/null \
+        | awk -v target="$name" '$1 == target { print $2; exit }')"
+    [ -n "$replicas" ] || return 1
+
+    running="${replicas%%/*}"
+    desired="${replicas##*/}"
+    [[ "$running" =~ ^[0-9]+$ && "$desired" =~ ^[0-9]+$ ]] || return 1
+    [ "$desired" -gt 0 ] && [ "$running" -eq "$desired" ]
+}
+
 # Reconcilia o arquivo de estado com o que a máquina REALMENTE tem.
 # O estado é só um cache; a máquina é a verdade. Sem isso, um state file
 # copiado de outro host, um `docker swarm leave`, ou uma stack removida à mão
@@ -831,14 +860,23 @@ reconcile_state() {
         log_warning "Rede '${NETWORK_NAME:-$OVERLAY_NAME}' não existe mais. Corrigindo o estado."
         state_set NETWORK_CREATED false
     fi
-    if state_is_done TRAEFIK_INSTALLED \
-       && ! docker service ls --format '{{.Name}}' 2>/dev/null | grep -qx 'traefik_traefik'; then
-        log_warning "Serviço traefik_traefik não existe mais. Corrigindo o estado."
+    if service_replicas_converged traefik_traefik; then
+        if ! state_is_done TRAEFIK_INSTALLED; then
+            log_info "Traefik já está convergido — marcando a etapa como concluída."
+            state_set TRAEFIK_INSTALLED true
+        fi
+    elif state_is_done TRAEFIK_INSTALLED; then
+        log_warning "Traefik não está no alvo de réplicas. Corrigindo o estado."
         state_set TRAEFIK_INSTALLED false
     fi
-    if state_is_done PORTAINER_INSTALLED \
-       && ! docker service ls --format '{{.Name}}' 2>/dev/null | grep -qx 'portainer_portainer'; then
-        log_warning "Serviço portainer_portainer não existe mais. Corrigindo o estado."
+
+    if service_replicas_converged portainer_portainer; then
+        if ! state_is_done PORTAINER_INSTALLED; then
+            log_info "Portainer já está convergido — marcando a etapa como concluída."
+            state_set PORTAINER_INSTALLED true
+        fi
+    elif state_is_done PORTAINER_INSTALLED; then
+        log_warning "Portainer não está no alvo de réplicas. Corrigindo o estado."
         state_set PORTAINER_INSTALLED false
     fi
 }
@@ -853,6 +891,25 @@ svc_enable_now() {
         openrc)  run rc-update add "$unit" default >/dev/null 2>&1 || true; run rc-service "$unit" start >/dev/null 2>&1 || return 1 ;;
         sysv)    run service "$unit" start >/dev/null 2>&1 || return 1 ;;
         *)       log_warning "Sem gerenciador de serviços — inicie '$unit' manualmente."; return 0 ;;
+    esac
+}
+
+# Habilita para os próximos boots sem iniciar/recarregar agora. Isso é
+# essencial para o nftables: o fragmento do instalador já é aplicado com
+# `nft -f`; iniciar o serviço depois que o Docker subiu pode executar o
+# `flush ruleset` global da distro e apagar as chains do Docker.
+svc_enable_only() {
+    local unit="$1"
+    case "$INIT_SYS" in
+        systemd) run systemctl enable "$unit" >/dev/null 2>&1 || return 1 ;;
+        openrc)  run rc-update add "$unit" default >/dev/null 2>&1 || return 1 ;;
+        sysv)
+            if have update-rc.d; then run update-rc.d "$unit" defaults >/dev/null 2>&1 || return 1
+            elif have chkconfig; then run chkconfig "$unit" on >/dev/null 2>&1 || return 1
+            else log_warning "Não consegui habilitar '$unit' automaticamente para o boot."; return 1
+            fi
+            ;;
+        *) log_warning "Sem gerenciador de serviços — habilite '$unit' manualmente no boot."; return 0 ;;
     esac
 }
 
@@ -1733,6 +1790,61 @@ fw_backend_detect() {
     printf 'none'
 }
 
+# Docker com backend iptables mantém uma chain `DOCKER` na tabela nat. Se um
+# gerenciador externo fizer `flush ruleset`, o daemon continua ativo mas não
+# percebe que a chain sumiu; toda publicação de porta passa a falhar com
+# "Unable to enable DNAT rule" até o daemon ser reiniciado.
+docker_firewall_chains_ready() {
+    have docker || return 0
+    docker info >/dev/null 2>&1 || return 0
+
+    local backend
+    backend="$(docker info --format '{{.FirewallBackend.Driver}}' 2>/dev/null || true)"
+    [ "$backend" = "nftables" ] && return 0
+
+    have iptables || return 0
+    iptables --wait -t nat -S DOCKER >/dev/null 2>&1
+}
+
+ensure_docker_firewall_chains() {
+    docker_firewall_chains_ready && return 0
+
+    log_warning "A chain DOCKER da tabela nat não existe; portas publicadas não funcionarão."
+    local running_containers
+    running_containers="$(docker ps -q 2>/dev/null | wc -l | tr -d '[:space:]')"
+    [ -n "$running_containers" ] || running_containers=0
+    if [ "$running_containers" -gt 0 ]; then
+        log_warning "Há ${running_containers} container(es) ativo(s); o reparo causa uma breve interrupção."
+    fi
+
+    if [ "$OPT_DRY_RUN" = "1" ]; then
+        log_info "[dry-run] Reiniciaria o Docker para reconstruir as chains de firewall."
+        return 0
+    fi
+
+    ask_yn "Reiniciar o Docker agora para reconstruir as chains de firewall?" "y" || {
+        log_error "Sem reconstruir as chains, Traefik/Portainer não podem publicar portas."
+        return 1
+    }
+
+    svc_restart docker || {
+        log_error "Falha ao reiniciar o Docker. Veja: journalctl -u docker -n 80 --no-pager"
+        return 1
+    }
+
+    local i
+    for i in $(seq 1 15); do
+        if docker info >/dev/null 2>&1 && docker_firewall_chains_ready; then
+            log_success "Chains de firewall do Docker reconstruídas."
+            return 0
+        fi
+        sleep 2
+    done
+
+    log_error "O Docker voltou, mas a chain nat/DOCKER continua ausente."
+    return 1
+}
+
 # --- nftables cirúrgico -----------------------------------------------------
 # Tabela própria (inet swarm_guard). Prioridade -10 → roda ANTES do filtro
 # padrão, decide sobre as portas do Swarm e não interfere no resto.
@@ -1791,7 +1903,10 @@ fw_apply_nftables() {
     elif [ ! -f /etc/nftables.conf ]; then
         printf '#!/usr/sbin/nft -f\ninclude "/etc/nftables.d/swarm-guard.nft"\n' | write_file /etc/nftables.conf
     fi
-    svc_enable_now nftables 2>/dev/null || log_warning "Habilite o serviço nftables para as regras sobreviverem ao reboot."
+    # O fragmento já está ativo pelo `nft -f` acima. NUNCA use `--now`
+    # aqui: iniciar/recarregar o serviço carrega o arquivo global da distro,
+    # que normalmente começa com `flush ruleset` e apaga as chains do Docker.
+    svc_enable_only nftables 2>/dev/null || log_warning "Habilite o serviço nftables para as regras sobreviverem ao reboot."
 
     [ "$edge" = "yes" ] && log_info "Nó edge: 80/443 seguem abertas (o Docker publica direto, sem passar pelo INPUT)."
     return 0
@@ -2024,6 +2139,10 @@ configure_firewall() {
     ask_yn "Aplicar?" "y" || { log_info "Firewall não alterado."; return 0; }
 
     if fw_with_rollback "$backend" "$peers_csv" "$edge"; then
+        ensure_docker_firewall_chains || {
+            log_warning "Firewall aplicado, mas as chains do Docker não foram recuperadas."
+            return 1
+        }
         state_set FIREWALL_BACKEND "$backend"
         state_set FIREWALL_CONFIGURED true
         log_success "Firewall configurado com ${backend}."
@@ -2367,6 +2486,7 @@ install_traefik() {
 
     ask_yn "Instalar o Traefik ${TRAEFIK_VERSION} agora?" "y" || { log_info "Traefik pulado."; return 0; }
 
+    ensure_docker_firewall_chains || return 1
     ensure_image "traefik:${TRAEFIK_VERSION}" || return 1
 
     local net="${NETWORK_NAME:-$OVERLAY_NAME}"
@@ -2615,7 +2735,7 @@ EOF
     run chmod 600 "$f"
     log_info "Stack file: ${f}"
 
-    run docker stack deploy --detach=false -c "$f" traefik || {
+    run docker stack deploy --detach=true -c "$f" traefik || {
         log_error "Deploy do Traefik falhou. Confira ${f}."; return 1; }
 
     local i ok=1
@@ -2829,7 +2949,7 @@ EOF
     run chmod 600 "$f"
     log_info "Stack file: ${f}"
 
-    run docker stack deploy --detach=false -c "$f" portainer || {
+    run docker stack deploy --detach=true -c "$f" portainer || {
         log_error "Deploy do Portainer falhou. Confira ${f}."; return 1; }
 
     # O portainer sobe antes do agent e a 1ª task costuma morrer com
