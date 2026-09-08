@@ -3,7 +3,7 @@
 #  Setup Automatizado — Instalador Completo de Cluster Docker Swarm
 # ============================================================================
 #  Autor:    Guilherme Jansen  ·  Setup Automatizado LTDA
-#  Versão:   3.0.1
+#  Versão:   3.0.2
 #  Licença:  MIT
 #
 #  COMPATIBILIDADE (detecção automática, sem menu de SO):
@@ -42,6 +42,11 @@
 # ----------------------------------------------------------------------------
 #  CHANGELOG
 # ----------------------------------------------------------------------------
+#  v3.0.2
+#    - Verifica DNS e HTTPS real do Portainer; réplica 1/1 não é acesso público.
+#    - --doctor verifica novamente o acesso sem reinstalar nem reiniciar serviços.
+#    - Informa resolver e rede para integração com um Hub existente.
+#
 #  v3.0.1
 #    - FIX CRÍTICO: `systemctl enable --now nftables` carregava o
 #      `/etc/nftables.conf` da distro enquanto o Docker já estava ativo. Em
@@ -177,7 +182,7 @@ DOCKER_LOG_DRIVER="${DOCKER_LOG_DRIVER:-local}"
 # ============================================================================
 #  CONSTANTES INTERNAS
 # ============================================================================
-readonly SCRIPT_VERSION="3.0.1"
+readonly SCRIPT_VERSION="3.0.2"
 readonly SCRIPT_NAME="${0##*/}"
 readonly DOCKER_CHANNEL="stable"
 readonly DOCKER_MIRROR="https://download.docker.com/linux"
@@ -436,6 +441,8 @@ STATE_KEYS=(
     TRAEFIK_INSTALLED
     TRAEFIK_RESOLVER
     PORTAINER_INSTALLED
+    PORTAINER_DOMAIN
+    PORTAINER_PUBLIC_READY
     NODE_TYPE
     NODE_ROLE
     NODE_IS_EDGE
@@ -449,7 +456,7 @@ state_default() {
         NETWORK_NAME)        printf '%s' "$OVERLAY_NAME" ;;
         TRAEFIK_RESOLVER)    printf 'letsencrypt' ;;
         FIREWALL_BACKEND)    printf '' ;;
-        OS_DISTRO|OS_CODENAME|OS_FAMILY_S|SYSTEM_USER|NODE_TYPE|NODE_ROLE|NODE_ADVERTISE_IP)
+        OS_DISTRO|OS_CODENAME|OS_FAMILY_S|SYSTEM_USER|NODE_TYPE|NODE_ROLE|NODE_ADVERTISE_IP|PORTAINER_DOMAIN)
                              printf '' ;;
         *)                   printf 'false' ;;
     esac
@@ -2748,7 +2755,7 @@ EOF
 
     if [ "$ok" -eq 0 ]; then
         state_set TRAEFIK_INSTALLED true
-        log_success "Traefik no ar (resolver=${resolver})."
+        log_success "Serviço Traefik em execução (resolver=${resolver}, rede=${net}); certificados dependem da validação dos domínios."
         [ "$dash" = "yes" ] && log_info "Dashboard: https://${dash_domain} (BasicAuth)."
         log_info "Aponte o DNS dos seus domínios para este nó ANTES de esperar certificado do Let's Encrypt."
     else
@@ -2772,6 +2779,40 @@ EOF
 #     serviço interno para e é preciso reiniciar o service. Por isso o
 #     instalador oferece semear a senha via secret e eliminar a corrida.
 # ----------------------------------------------------------------------------
+
+# Confirma a rota real, incluindo DNS, certificado e API. Nunca usa curl -k,
+# redirecionamentos ou token de administrador; /api/status é público.
+portainer_public_check() {
+    local domain="$1" attempts="${2:-8}" i code rc
+    if [ "$OPT_DRY_RUN" = "1" ]; then
+        log_info "[dry-run] Verificaria https://${domain}/api/status"
+        return 0
+    fi
+    for ((i=1; i<=attempts; i++)); do
+        rc=0
+        code="$(curl --noproxy '*' --proto '=https' --connect-timeout 5 --max-time 8 \
+            --silent --output /dev/null --write-out '%{http_code}' \
+            "https://${domain}/api/status")" || rc=$?
+        if [ "$rc" -eq 0 ] && [ "$code" = "200" ]; then
+            state_set PORTAINER_PUBLIC_READY true
+            log_success "Portainer acessível: DNS, HTTPS e API verificados em https://${domain}"
+            return 0
+        fi
+        # Sem DNS, esperar aqui apenas consome a janela de cadastro do admin.
+        [ "$rc" -eq 6 ] && break
+        [ "$i" -lt "$attempts" ] && sleep 5
+    done
+    state_set PORTAINER_PUBLIC_READY false
+    log_warning "Portainer instalado, mas acesso público ainda pendente (curl=${rc}, HTTP=${code})."
+    case "$rc" in
+        6) log_warning "Crie o DNS de ${domain} para o IP público deste manager. Sem DNS, o certificado não pode ser emitido." ;;
+        60) log_warning "DNS respondeu, mas o certificado ainda não é válido. Verifique o resolver do Traefik e os desafios ACME." ;;
+        7|28) log_warning "Verifique o IP do DNS e as portas 80/443 no firewall do servidor/provedor." ;;
+        *) log_warning "Verifique a rota do Portainer na rede do Traefik e os logs dos dois serviços." ;;
+    esac
+    log_info "Depois de corrigir, execute o instalador com --doctor; não é necessário reinstalar a stack."
+    return 1
+}
 
 install_portainer() {
     step_skipped portainer && return 0
@@ -2967,7 +3008,9 @@ EOF
 
     if [ "$ok" -eq 0 ]; then
         state_set PORTAINER_INSTALLED true
-        log_success "Portainer no ar em https://${domain}"
+        state_set PORTAINER_DOMAIN "$domain"
+        log_info "Integração com o Hub: rede=${net}, resolver=${resolver}."
+        portainer_public_check "$domain" || true
         if [ "$seed_admin" = "yes" ]; then
             # A senha vai para a tela e para o arquivo 600 — NUNCA para o setup.log.
             printf '\n%s┌─ CREDENCIAIS INICIAIS DO PORTAINER ─────────────────────────┐%s\n' "$YELLOW" "$NC"
@@ -3003,6 +3046,16 @@ EOF
 # ============================================================================
 doctor() {
     log_step "Diagnóstico"
+    local public_domain="${PORTAINER_DOMAIN:-}" rule=""
+    if [ -z "$public_domain" ] && have docker; then
+        # Migração de instalações anteriores à v3.0.2: ler a rota existente,
+        # sem recriar serviço, alterar labels ou ler credenciais.
+        rule="$(docker service inspect portainer_portainer --format '{{ index .Spec.Labels "traefik.http.routers.portainer.rule" }}' 2>/dev/null || true)"
+        public_domain="$(printf '%s' "$rule" | sed -n 's/^Host(`\([^`]*\)`)$/\1/p')"
+    fi
+    if [[ "$public_domain" =~ ^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?\.[A-Za-z]{2,}$ ]]; then
+        portainer_public_check "$public_domain" 1 || true
+    fi
 
     printf '%sSistema%s\n' "$BOLD" "$NC"
     printf '  SO ............ %s\n' "${OS_PRETTY:-?}"
