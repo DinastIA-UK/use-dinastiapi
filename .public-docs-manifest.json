@@ -1,0 +1,30 @@
+{
+  "brand": "DinastiAPI",
+  "files": {
+    "README.md": "55be39fe02b3941cb1e11f34a4a88fbd1d2a46a2e042e45330777f65a2b3a946",
+    "api/connector-llm.txt": "7fed075738feeff31f33592371a2cb1c98080f79d4c341505302e89f81732111",
+    "api/llm.txt": "509075850e1fc67ea0f56fd84b0cff1cebca732e76daa83fc4925ddaf697325d",
+    "api/network-route-llm.txt": "74809b31e253fb7bb0d92ec7b3a5bcf564cf0f05b2a0118a907ef0dab04e7069",
+    "api/spec.yml": "61d4299ffd073c9c155e8ed3fbd3488277cae10de840c40c8760ac795c621921",
+    "api/swagger.json": "248237cdf6c24615ffc020ffc50fa3ccfb50b49d908638cd1108ea2530156a02",
+    "api/swagger.yaml": "fded0674d3ddfd3a99e6bc4d8b0a9ba2eef065e72ad38db8aa6240d1caf868e4",
+    "docs/CONFIGURATION.md": "ab55db0cfae62c7b7edd4a5eddeaa3b1d5bacfc6d9ada0d5d1d8614689d7a7bb",
+    "docs/INDEX.md": "d37619f3a59dbb623fe284b01a83044be3dd3e4e7b98e22db2ad44cb0ef744a7",
+    "docs/INSTALL.md": "8b9f233c5bd5a2963c4685ff603d232ffe7129084fcfd10a3f1829b1443dd8fd",
+    "docs/call-audio-implementation-guide.md": "244ea93719de1c6d7307ab09fe1850b232faeaf8bd32e4cfea96dbf4adc0b7db",
+    "docs/call-video-guide.md": "d20738d23c309e03cb45dfa27a3533ee98bec8069a707b377468f4f8dbe660c2",
+    "docs/connector.md": "e5b0ba9e4f44a7e34ccf3ef4400e0fdc9261692aa75d057ea1f864b767d8cf59",
+    "docs/network-route.md": "44dea1a96fd9aad9a90276fc17367bb0a617575ea40403c912ec863231dce0c2",
+    "docs/passkey-integration.md": "0541ed24e96b1c867a0b09814069fd72866b456ab962f2207aa64998c3632963",
+    "docs/session-import.md": "edaf0b0e353b27a0b22429d153f03ead9b3904a5435b7026f184ff8744e00b4e",
+    "docs/webhook-events.md": "bcb204096b40e1a386f108f47246173e75f41f0ad945a6eb662a735d7d8b0320",
+    "docs/whatsapp-web-call-integration.md": "92950774c962181b379270b3019cedc2d8e37190223f32f7406bc17463d23d9c",
+    "install.bat": "19876c1c04c37daea9567dd47494f0c1969ac502c67a51abf615c8f961930696",
+    "install.sh": "6d29843fe05b929d7c989cea908bf1613a0b0368db3370227be0d44a04a7ef24",
+    "llms.txt": "2ae703a28f71c7a300677527202c390247fbc372c2b2d97df99c44b5e50c3c30"
+  },
+  "public_repository": "DinastIA-UK/use-dinastiapi",
+  "schema": 1,
+  "source_commit": "f96d911c7b6dacb7c7d52633a87eb52b8a760406",
+  "version": "2.4.2"
+}
